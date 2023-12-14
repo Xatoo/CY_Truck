@@ -2,44 +2,43 @@
 
 option_d1() {
     echo "Traitement pour l'option -d1"
-    #cat data/test.txt| cut -d';' -f1,6 > temp/temp.txt
-    #sort -t';' -k6,6 -k5,5n data/test.txt > temp/temp.txt
-    cat data/test.txt | cut -d';' -f1,6 | sort -t';' -k2,2 -k1,1n > temp/temp.txt
+    
+    cat $chemin_du_fichier | cut -d';' -f1,6 | sort -t';' -k2,2 -k1,1n > temp/temp.csv
    
-    awk -F';' 'NR==1{prev=$0; print $0} NR>1 && $0!=prev{prev=$0; print $0}' temp/temp.txt > temp/temp2.txt
+    awk -F';' 'NR==1{prev=$0; print $0} NR>1 && $0!=prev{prev=$0; print $0}' temp/temp.csv > temp/temp2.csv
    
-    awk -F';' '{nom=$2" "$3; noms[nom]++} END {for (nom in noms) print nom";"noms[nom]}' temp/temp2.txt > temp/temp3.txt
+    awk -F';' '{nom=$2" "$3; noms[nom]++} END {for (nom in noms) print nom";"noms[nom]}' temp/temp2.csv > temp/temp3.csv
    
-   sort -t';' -k2 temp/temp3.txt > temp/temp4.txt
+   sort -t';' -k2 temp/temp3.csv > temp/temp4.csv
    
-   tail -n 5 temp/temp4.txt > demo/demo-d1.txt
+   tail -n 10 temp/temp4.csv > demo/demo-d1.csv
    
 }
 
 option_d2() {
     echo "Traitement pour l'option -d2"
    
-    cat data/test.txt | cut -d';' -f5,6 | sort -t';' -k2,2 -k1,1n > temp/temp.txt
+    cat $chemin_du_fichier | cut -d';' -f5,6 | sort -t';' -k2,2 -k1,1n > temp/temp.csv
    
-    awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' temp/temp.txt > temp/temp2.txt
+    awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' temp/temp.csv > temp/temp2.csv
    
-    sort -t';' -k1 -n temp/temp2.txt > temp/temp3.txt
+    sort -t';' -k1 -n temp/temp2.csv > temp/temp3.csv
     
-    tail -n 5 temp/temp3.txt > demo/demo-d2.txt
+    tail -n 10 temp/temp3.csv > demo/demo-d2.csv
 }
 
 option_l() {
     echo "Traitement pour l'option -l"
    
-    cat data/test.txt | cut -d';' -f1,5 | sort -t';' -k1 > temp/temp.txt
+    cat $chemin_du_fichier | cut -d';' -f1,5 | sort -t';' -k1 > temp/temp.csv
    
-    awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' temp/temp.txt > temp/temp2.txt
+    awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' temp/temp.csv > temp/temp2.csv
    
-   sort -t';' -k2 -n temp/temp2.txt > temp/temp3.txt
+   sort -t';' -k2 -n temp/temp2.csv > temp/temp3.csv
    
-   tail -n 5 temp/temp3.txt > temp/temp4.txt
+   tail -n 10 temp/temp3.csv > temp/temp4.csv
    
-   sort -t';' -k1 -n temp/temp4.txt > demo/demo-t.txt
+   sort -t';' -k1 -n temp/temp4.csv > demo/demo-l.csv
 }
 
 option_t() {
@@ -75,7 +74,6 @@ if [ ! -f "$chemin_du_fichier" ]; then
     echo "Le fichier $chemin_du_fichier n'existe pas ou n'est pas accessible."
     exit 1
 fi
-
 
 if [ ! -d "temp" ]; then
     mkdir "temp"
