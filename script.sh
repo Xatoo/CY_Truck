@@ -109,7 +109,7 @@ for arg in "$@"; do
     fi
 done
 
-declare -a options_seen=()
+declare -a options_vu=()
 
 # Variable pour stocker toutes les options différentes
 all_different=true
@@ -119,13 +119,13 @@ while [ "$#" -gt 0 ]; do
     case "$1" in
         -d1 | -d2 | -l | -t | -s)
             # Vérifier si l'option a déjà été utilisée
-            for opt in "${options_seen[@]}"; do
+            for opt in "${options_vu[@]}"; do
                 if [ "$opt" = "$1" ]; then
                     echo "L'option $1 a été utilisée plusieurs fois."
                     exit 1
                 fi
             done
-            options_seen+=("$1")
+            options_vu+=("$1")
             ;;
         *)
             if [ "$1" != "$chemin_du_fichier" ]; then
@@ -139,7 +139,7 @@ done
 
 # Exécution de toutes les options si elles sont toutes différentes
 if [ "$all_different" = true ]; then
-    for opt in "${options_seen[@]}"; do
+    for opt in "${options_vu[@]}"; do
         case "$opt" in
             -d1) option_d1 ;;
             -d2) option_d2 ;;
