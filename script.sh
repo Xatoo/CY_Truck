@@ -5,9 +5,9 @@ option_d1() {
     
     cat $chemin_du_fichier | cut -d';' -f1,6 | sort -t';' -k2,2 -k1,1n > temp/temp.csv
    
-    awk -F';' 'NR==1{prev=$0; print $0} NR>1 && $0!=prev{prev=$0; print $0}' temp/temp.csv > temp/temp2.csv
+    uniq temp/temp.csv > temp/temp2.csv
    
-    awk -F';' '{nom=$2" "$3; noms[nom]++} END {for (nom in noms) print nom";"noms[nom]}' temp/temp2.csv > temp/temp3.csv
+    awk -F';' '{noms=[$2]" "[$3]; noms[nom]=1} END {for (nom in noms) print nom";"noms[nom]}' temp/temp2.csv > temp/temp3.csv
    
    sort -t';' -k2 temp/temp3.csv > temp/temp4.csv
    
@@ -18,13 +18,8 @@ option_d1() {
 option_d2() {
     echo "Traitement pour l'option -d2"
    
-    cat $chemin_du_fichier | cut -d';' -f5,6 | sort -t';' -k2,2 -k1,1n > temp/temp.csv
-   
-    awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' temp/temp.csv > temp/temp2.csv
-   
-    sort -t';' -k1 -n temp/temp2.csv > temp/temp3.csv
+    cat $chemin_du_fichier | cut -d';' -f5,6 | awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > demo/demo-d2.csv
     
-    tail -n 10 temp/temp3.csv > demo/demo-d2.csv
 }
 
 option_l() {
