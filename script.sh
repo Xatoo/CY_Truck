@@ -17,7 +17,7 @@ option_d1() {
 
 option_d2() {
     echo "Traitement pour l'option -d2"
-   
+   #doute sur la manière dont les nombres sont compté (le '.' sert de virgule ou de separation)
     cat $chemin_du_fichier | cut -d';' -f5,6 | awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > demo/demo-d2.csv
     
 }
