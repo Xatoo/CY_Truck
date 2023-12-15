@@ -1,9 +1,0 @@
-1000;100;lyon;paris;500;matuidi;charo
-1001;101;milan;paris;1500;zlatan;ibrahimovic
-1002;102;inter;paris;4500;pionel;pessi
-1003;103;paris;barcelone;800;neymar;dasilvasantosjr
-1000;104;madrid;lyon;1000;karim;benzema
-1005;105;munich;tottenham;1600;harry;kane
-1006;106;turin;manchester;2400;paul;pogba
-1007;107;seville;madrid;756;sergio;ramos
-1008;108;madrid;majorque;512;antoine;griezmann
