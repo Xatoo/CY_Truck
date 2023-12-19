@@ -17,15 +17,8 @@ option_d2() {
 option_l() {
     echo "Traitement pour l'option -l"
    
-    cat $chemin_du_fichier | cut -d';' -f1,5 | sort -t';' -k1 > temp/temp.csv
-   
-    awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' temp/temp.csv > temp/temp2.csv
-   
-   sort -t';' -k2 -n temp/temp2.csv > temp/temp3.csv
-   
-   tail -n 10 temp/temp3.csv > temp/temp4.csv
-   
-   sort -t';' -k1 -n temp/temp4.csv > demo/demo-l.csv
+       
+   cat $chemin_du_fichier | cut -d';' -f1,5| awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 > demo/demo-l.csv
 }
 
 option_t() {
