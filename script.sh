@@ -3,15 +3,7 @@
 option_d1() {
     echo "Traitement pour l'option -d1"
     
-    cat $chemin_du_fichier | cut -d';' -f1,6 | sort -t';' -k2,2 -k1,1n > temp/temp.csv
-   
-    uniq temp/temp.csv > temp/temp2.csv
-   
-    awk -F';' '{noms=[$2]" "[$3]; noms[nom]=1} END {for (nom in noms) print nom";"noms[nom]}' temp/temp2.csv > temp/temp3.csv
-   
-   sort -t';' -k2 temp/temp3.csv > temp/temp4.csv
-   
-   tail -n 10 temp/temp4.csv > demo/demo-d1.csv
+    cat $chemin_du_fichier | cut -d';' -f1,6 | sort -t';' -k2,2 -k1,1n | awk -F';' '{noms=[$2]" "[$3]; noms[nom]=1} END {for (nom in noms) print nom";"noms[nom]}' |sort -t';' -k2 -n |tail 10 > demo/demo-d1.cs
    
 }
 
