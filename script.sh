@@ -3,7 +3,7 @@
 option_d1() {
     echo "Traitement pour l'option -d1"
     
-    cat $chemin_du_fichier | cut -d';' -f1,6 | sort -t';' -k2,2 -k1,1n | awk -F';' '{noms=[$2]" "[$3]; noms[nom]=1} END {for (nom in noms) print nom";"noms[nom]}' |sort -t';' -k2 -n |tail 10 > demo/demo-d1.cs
+    cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++' | awk -F';' '{count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > demo/demo-d1.csv
    
 }
 
