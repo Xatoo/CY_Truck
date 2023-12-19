@@ -18,7 +18,7 @@ option_l() {
     echo "Traitement pour l'option -l"
    
        
-   cat $chemin_du_fichier | cut -d';' -f1,5| awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 > demo/demo-l.csv
+   cat $chemin_du_fichier | cut -d';' -f1,5| awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 |sort -r -k2 > demo/demo-l.csv
 }
 
 option_t() {
