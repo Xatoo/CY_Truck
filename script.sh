@@ -23,7 +23,7 @@ option_l() {
 
 option_t() {
     echo "Traitement pour l'option -t"
-    cat data/test.txt  | cut -d';' -f3,4,6,7 > temp/temp.txt
+    cat data/data.csv  | cut -d';' -f3,4,6,7 
 }
 
 option_s() {
