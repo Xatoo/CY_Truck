@@ -3,13 +3,13 @@
 option_d1() {
     echo "Traitement pour l'option -d1"
     
-    cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++' | awk -F';' '{count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > demo/demo-d1.csv
+    cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > demo/demo-d1.csv
    
 }
 
 option_d2() {
     echo "Traitement pour l'option -d2"
-   #doute sur la manière dont les nombres sont compté (le '.' sert de virgule ou de separation)
+   
     cat $chemin_du_fichier | cut -d';' -f5,6 | awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > demo/demo-d2.csv
     
 }
@@ -17,13 +17,19 @@ option_d2() {
 option_l() {
     echo "Traitement pour l'option -l"
    
-       
-   cat $chemin_du_fichier | cut -d';' -f1,5| awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 |sort -n -k1 > demo/demo-l.csv
+    cat $chemin_du_fichier | cut -d';' -f1,5| awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -k1 -n > demo/demo-l.csv
 }
 
 option_t() {
     echo "Traitement pour l'option -t"
-    cat data/data.csv  | cut -d';' -f3,4,6,7 
+    
+    gcc progc/option_t.c -o progc/option_t
+    if [ $? -ne 0 ] ; then
+    echo "Probleme"
+    exit 1
+    fi
+
+    cat data/data.csv  | tail +2 | cut -d';' -f1,6 | ./progc/option_t > 
 }
 
 option_s() {
