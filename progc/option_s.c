@@ -1,6 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+typedef struct _stat{
+	float min;
+	float max;
+	float som;
+	int compteur;
+	float moy;
+}Stat;
+
+
 typedef struct _arbre{
 	int id_trajet;
 	float distance;
