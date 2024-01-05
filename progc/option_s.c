@@ -1,22 +1,20 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-typedef struct _stat{
-	float min;
-	float max;
-	float som;
-	int compteur;
-	float moy;
-}Stat;
+
 
 
 typedef struct _arbre{
 	int id_trajet;
 	float distance;
-	int eq;
 	struct _arbre *fg;
 	struct _arbre *fd;
-	
+	int eq;
+	float min;
+	float max;
+	float som;
+	int compteur;
+	float moy;
 	
 
 }Arbre;
@@ -55,13 +53,37 @@ Arbre * creerAvl(int id_t,float d){
 	Arbre * avl = malloc(sizeof(Arbre));
 	avl->id_trajet = id_t;
 	avl->distance = d;
-	avl->eq = equilibre(avl);
+	avl->eq = 0;
 	avl->fg = NULL;
 	avl->fd = NULL;
-
-
+	avl->eq = 0;
+	avl->min = d;
+	avl->max = d;
+	avl->som = d;
+	avl->compteur = 1;
+	avl->moy =d;
 
 }
+
+
+
+Arbre * maj(float d,Arbre * avl){
+	if (avl != NULL){
+		
+		if (avl-> min > d){
+			avl->min = d;
+		}
+		if (avl->max < d){
+			avl->max =d;
+		}
+		avl->som +=d;
+		avl->compteur +=1;
+		avl->moy = avl->som/avl->compteur;
+		
+	}
+	return avl;
+}
+
 
 Arbre * rotationGauche(Arbre * avl){
 	Arbre * pivot = avl->fd;
@@ -73,11 +95,28 @@ Arbre * rotationGauche(Arbre * avl){
 	
 	avl->eq = eq_avl - max(eq_piv,0) -1;
 	pivot->eq = min2(eq_avl-2,eq_avl+eq_piv-2,eq_piv-1);
-
+	avl = pivot;
 	return avl;
 
 
 }
+
+Arbre * recherche(Arbre * avl, int id){
+	if (avl == NULL){
+		return NULL;
+	}
+	else if (avl->id_trajet == id){
+		return avl;
+	}
+	else if (id < avl->id_trajet){
+		return recherche(avl->fg,id);
+	}
+	else {
+		return recherche(avl->fd,id);
+	}
+
+}
+
 
 
 Arbre * rotationDroite(Arbre * avl){
@@ -111,70 +150,66 @@ Arbre * rotationDoubleDroite(Arbre * avl){
 
 }
 
-Arbre * insertion(Arbre * avl, int id_trajet,float distance){
+
+Arbre * equilibreAvl(Arbre * avl){
+	if (avl->eq >=2){
+		if (avl->fd->eq >=0){
+			return rotationGauche(avl);
+		}
+		else {
+			return rotationDoubleGauche(avl);
+		}
 	
-	if (avl == NULL){
-		return creerAvl(id_trajet,distance);	
-	}	
-	if (id_trajet < avl->id_trajet){
-		avl->fg = insertion(avl->fg,id_trajet,distance);
 	}
-	else if (id_trajet > avl->id_trajet){
-		avl->fd = insertion(avl->fd,id_trajet,distance);
-	}
-	else {
-		return avl;
-	}
-
-	avl->eq = equilibre(avl);
+	else if (avl->eq <= -2){
+		if (avl->fg->eq <=0){
+			return rotationDroite(avl);
+		}
+		else {
+			return rotationDoubleDroite(avl);
+		}
 	
 	
-
-	if (avl->eq >1 && id_trajet < avl->fg->id_trajet){
-		return rotationGauche(avl);
-
-	}
-	if (avl->eq < -1 && id_trajet > avl->fd->id_trajet){
-		return rotationGauche(avl);
-
-	}
-	if (avl->eq >1 && id_trajet > avl->fd->id_trajet){
-		return rotationDoubleDroite(avl);
-
-	}
-
-	if (avl->eq < -1 && id_trajet < avl->fd->id_trajet){
-		return rotationDoubleGauche(avl);
-
 	}
 	return avl;
+}
+
+
+
+
+Arbre * insertion(Arbre * avl, int id_trajet,int *h,float distance){
 	
-}
-
-void stat(Arbre * avl){
-
-	if (avl != NULL){
-		
-		stat(avl->fg);
-		
-		float min = avl -> distance;
-		float max = avl -> distance;
-		float som = avl -> distance;
-		int compteur = 1;
-
-		while (avl ->fd != NULL && avl->fd->id_trajet == avl->id_trajet){
-			avl = avl->fd;
-			min=(min >avl->distance) ? avl->distance : min;
-			max=(max >avl->distance) ? avl->distance : max;
-			som += avl->distance;
-			compteur ++;
-		}
-		
-		float moyenne = som /compteur;
-		
-		printf("Trajet %d; min = %.2f;max = %.2f, moyenne =%.2f\n", avl->id_trajet,min,max,moyenne);
+	if (avl == NULL){
+		*h=1;
+		return creerAvl(id_trajet,distance);	
+	}	
+	else if (id_trajet < avl->id_trajet){
+		avl->fg = insertion(avl->fg,id_trajet,h,distance);
+		*h = -*h;
 	}
+	else if (id_trajet > avl->id_trajet){
+		avl->fd = insertion(avl->fd,id_trajet,h,distance);
+	}
+	else {
+		*h=0;
+		return avl;
+	
+	}
+	if (*h != 0){
+		avl->eq = avl->eq +*h;
+		avl = equilibreAvl(avl);
+		if (avl->eq ==0){
+			*h=0;
+		}
+		else {
+			*h=1;
+		}
+	
+	}
+	return avl;	
 }
+
+
 
 void infixe(Arbre * avl){	
 	if (avl != NULL){
@@ -184,26 +219,39 @@ void infixe(Arbre * avl){
 		infixe(avl->fd);
 	
 }
-
 }
+
 
 int main(){
 
-	printf("bonjour");
+	
 	Arbre * avl = NULL;
 	float d;
 	int id_t;
-	
-	
+	int *h;
+	printf("hello");
 	while(scanf("%d;%f", &id_t,&d) == 2){
 		
-		avl=insertion(avl,id_t,d);
+		Arbre * p = avl; 	
+		
+		if (recherche(avl,id_t) == NULL){
+			avl=insertion(avl,id_t,h,d);
+		}
+		else {
+			p = recherche(avl,id_t);
+			p = maj(d,p);
+		
+		}
+		
 		
 	}
 	
+	
+	
+	
 	infixe(avl);
 	
-	stat(avl);
+	
 	
 	
 	
