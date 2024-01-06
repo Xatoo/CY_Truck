@@ -53,7 +53,6 @@ Arbre * creerAvl(int id_t,float d){
 	Arbre * avl = malloc(sizeof(Arbre));
 	avl->id_trajet = id_t;
 	avl->distance = d;
-	avl->eq = 0;
 	avl->fg = NULL;
 	avl->fd = NULL;
 	avl->eq = 0;
@@ -62,7 +61,8 @@ Arbre * creerAvl(int id_t,float d){
 	avl->som = d;
 	avl->compteur = 1;
 	avl->moy =d;
-
+	
+	return avl;
 }
 
 
@@ -177,32 +177,42 @@ Arbre * equilibreAvl(Arbre * avl){
 
 
 
-Arbre * insertion(Arbre * avl, int id_trajet,int *h,float distance){
+Arbre * insertion(Arbre * avl, int id_trajet,int h,float distance){
 	
+		
 	if (avl == NULL){
-		*h=1;
+	
+		
+		h=1;
+	
+		
+		
 		return creerAvl(id_trajet,distance);	
 	}	
 	else if (id_trajet < avl->id_trajet){
+			
 		avl->fg = insertion(avl->fg,id_trajet,h,distance);
-		*h = -*h;
+		h = -h;
 	}
 	else if (id_trajet > avl->id_trajet){
+			
 		avl->fd = insertion(avl->fd,id_trajet,h,distance);
 	}
 	else {
-		*h=0;
+		h=0;
 		return avl;
 	
 	}
-	if (*h != 0){
-		avl->eq = avl->eq +*h;
+	
+	if (h != 0){
+		
+		avl->eq = avl->eq +h;
 		avl = equilibreAvl(avl);
 		if (avl->eq ==0){
-			*h=0;
+			h=0;
 		}
 		else {
-			*h=1;
+			h=1;
 		}
 	
 	}
@@ -215,7 +225,7 @@ void infixe(Arbre * avl){
 	if (avl != NULL){
 	
 		infixe(avl->fg);
-		printf("%d", avl->id_trajet);
+		printf("%d\n", avl->id_trajet);
 		infixe(avl->fd);
 	
 }
@@ -228,28 +238,30 @@ int main(){
 	Arbre * avl = NULL;
 	float d;
 	int id_t;
-	int *h;
-	printf("hello");
+	int h;
+	
 	while(scanf("%d;%f", &id_t,&d) == 2){
-		
-		Arbre * p = avl; 	
-		
+		//printf("%d;%f\n",id_t,d);
+		Arbre * p = avl;
 		if (recherche(avl,id_t) == NULL){
-			avl=insertion(avl,id_t,h,d);
-		}
-		else {
-			p = recherche(avl,id_t);
-			p = maj(d,p);
+			
+			
+			avl = insertion(avl,id_t,h,d);
+				
+			
 		
 		}
+		
+		
+		
 		
 		
 	}
 	
-	
-	
-	
 	infixe(avl);
+	
+	
+	
 	
 	
 	
