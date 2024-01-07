@@ -36,7 +36,7 @@ option_s() {
     echo "Traitement pour l'option -s"
     gcc -o progc/option_s progc/option_s.c
 
-    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5| ./progc/option_s 
+    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5| ./progc/option_s > demo/demo-s.csv
 }
 
 option_h() {
