@@ -15,23 +15,25 @@ typedef struct _arbre{
 	float som;
 	int compteur;
 	float moy;
+	float diff;
 	
 
 }Arbre;
 
-int taille(Arbre * avl){
-	if (avl==NULL){
-		return 0;
-	}
-	return 1 + taille(avl->fg)+taille(avl->fd);
-}
 
-int equilibre(Arbre * avl){
-	if (avl ==NULL){
-		return 0;
-	}
-	return taille(avl->fg) - taille (avl->fd);	
-}
+typedef struct {
+	int id_trajet;
+	float max;
+	float min;
+	float moy;
+	float diff;
+} NoeudInfo;
+
+typedef struct {
+	NoeudInfo* v;
+	size_t comp;
+	size_t capacite;
+} TopValeur;
 
 
 int max(int a,int b){
@@ -49,7 +51,7 @@ int min2(int a,int b,int c){
 	return min(min(a,b),c);
 }
 
-Arbre * creerAvl(int id_t,float d){
+Arbre * creerAvl(unsigned int id_t,float d){
 	Arbre * avl = malloc(sizeof(Arbre));
 	avl->id_trajet = id_t;
 	avl->distance = d;
@@ -61,13 +63,15 @@ Arbre * creerAvl(int id_t,float d){
 	avl->som = d;
 	avl->compteur = 1;
 	avl->moy =d;
+	avl->diff=0;
 	
 	return avl;
 }
 
 
 
-Arbre * maj(float d,Arbre * avl){
+
+void maj(float d,Arbre * avl){
 	if (avl != NULL){
 		
 		if (avl-> min > d){
@@ -79,9 +83,10 @@ Arbre * maj(float d,Arbre * avl){
 		avl->som +=d;
 		avl->compteur +=1;
 		avl->moy = avl->som/avl->compteur;
+		avl->diff = avl->max - avl->min;
 		
 	}
-	return avl;
+	
 }
 
 
@@ -101,7 +106,7 @@ Arbre * rotationGauche(Arbre * avl){
 
 }
 
-Arbre * recherche(Arbre * avl, int id){
+Arbre * recherche(Arbre * avl,int id){
 	if (avl == NULL){
 		return NULL;
 	}
@@ -177,7 +182,7 @@ Arbre * equilibreAvl(Arbre * avl){
 
 
 
-Arbre * insertion(Arbre * avl, int id_trajet,int h,float distance){
+Arbre * insertion(Arbre * avl,int id_trajet,int h,float distance){
 	
 		
 	if (avl == NULL){
@@ -221,15 +226,105 @@ Arbre * insertion(Arbre * avl, int id_trajet,int h,float distance){
 
 
 
-void infixe(Arbre * avl){	
-	if (avl != NULL){
-	
-		infixe(avl->fg);
-		printf("%d\n", avl->id_trajet);
-		infixe(avl->fd);
-	
+
+
+
+TopValeur* initTopValeur(size_t capacite) {
+	TopValeur* topvaleur = malloc(sizeof(TopValeur));
+	topvaleur->v = malloc(capacite * sizeof(NoeudInfo));
+	topvaleur->comp = 0;
+	topvaleur->capacite = capacite;
+	return topvaleur;
 }
+
+void freeTopValeur(TopValeur* topvaleur) {
+	free(topvaleur->v);
+	free(topvaleur);
 }
+
+
+void insertTopValeur(TopValeur* topvaleur, NoeudInfo value) {
+	if (topvaleur->comp < topvaleur->capacite || value.diff > topvaleur->v[topvaleur->comp - 1].diff) {
+		size_t i = topvaleur->comp;
+		while (i > 0 && value.diff > topvaleur->v[i - 1].diff) {
+			if (i < topvaleur->capacite) {
+				topvaleur->v[i] = topvaleur->v[i - 1];
+			}
+			i--;
+		}
+
+		if (i < topvaleur->capacite) {
+			topvaleur->v[i] = value;
+		}
+
+		if (topvaleur->comp < topvaleur->capacite) {
+			topvaleur->comp++;
+		}
+	}
+}
+
+
+
+
+
+
+
+void traverseAVL(Arbre* avl, TopValeur* topvaleur) {
+	if (avl != NULL) {
+		traverseAVL(avl->fd, topvaleur);
+
+		
+		NoeudInfo NoeudInfo;
+		NoeudInfo.id_trajet = avl->id_trajet;
+		NoeudInfo.max = avl->max;
+		NoeudInfo.min = avl->min;
+		NoeudInfo.moy = avl->moy;
+		NoeudInfo.diff = avl->diff;
+
+		insertTopValeur(topvaleur, NoeudInfo);
+
+		traverseAVL(avl->fg, topvaleur);
+	}
+}
+
+int compareDecroissant(const void* a, const void* b) {
+	float diffA = ((NoeudInfo*)a)->diff;
+	float diffB = ((NoeudInfo*)b)->diff;
+
+	if (diffA < diffB) {
+		return 1;
+	}
+	else if (diffA > diffB) {
+		return -1;
+	}
+	else {
+		return 0;
+	}
+}
+
+
+void plusGrandesValeurs(Arbre* avl) {
+	size_t capacite = 50;
+	TopValeur* topvaleur = initTopValeur(capacite);
+
+	
+	traverseAVL(avl, topvaleur);
+
+
+	qsort(topvaleur->v, topvaleur->comp, sizeof(NoeudInfo), compareDecroissant);
+	
+	
+	for (size_t i = 0; i < topvaleur->comp; i++) {
+		printf("%d;%f;%f;%f;%f\n",topvaleur->v[i].id_trajet,
+			topvaleur->v[i].max, topvaleur->v[i].min,
+			topvaleur->v[i].moy, topvaleur->v[i].diff);
+	}
+
+	
+	freeTopValeur(topvaleur);
+}
+
+
 
 
 int main(){
@@ -241,31 +336,20 @@ int main(){
 	int h;
 	
 	while(scanf("%d;%f", &id_t,&d) == 2){
-		//printf("%d;%f\n",id_t,d);
 		Arbre * p = avl;
-		if (recherche(avl,id_t) == NULL){
-			
-			
+		if (recherche(avl,id_t) == NULL){	
 			avl = insertion(avl,id_t,h,d);
-				
+		}else {
+		
+			p = recherche(avl,id_t);
+			maj(d,p);
 			
 		
-		}
 		
-		
-		
-		
-		
+		}			
 	}
-	
-	infixe(avl);
-	
-	
-	
-	
-	
-	
-	
+		
+	plusGrandesValeurs(avl);
 	
 	free(avl);
 	
