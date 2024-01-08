@@ -29,7 +29,7 @@ option_t() {
     exit 1
     fi
 
-    cat data/data.csv  | tail +2 | cut -d';' -f1,6 | ./progc/option_t > 
+    cat data/data.csv  | tail +2 | cut -d';' -f1,6 | ./progc/option_t
 }
 
 option_s() {
