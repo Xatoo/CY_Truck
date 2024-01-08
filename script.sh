@@ -25,16 +25,21 @@ option_t() {
     
     gcc progc/option_t.c -o progc/option_t
     if [ $? -ne 0 ] ; then
-    echo "Probleme"
+    echo "Erreur lors de la compilation"
     exit 1
     fi
 
-    cat $chemin_du_fichier  | tail +2 | cut -d';' -f1,6 | ./progc/option_t > demo/demo-t.csv
+    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,6 | ./progc/option_t> demo/demo-t.csv
 }
 
 option_s() {
     echo "Traitement pour l'option -s"
+    
     gcc -o progc/option_s progc/option_s.c
+    if [ $? -ne 0 ] ; then
+    echo "Erreur lors de la compilation"
+    exit 1
+    fi
 
     cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5| ./progc/option_s > demo/demo-s.csv
 }
