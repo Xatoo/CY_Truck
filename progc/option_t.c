@@ -41,7 +41,7 @@ Arbre *creerArbre(int elmt) {
     avl->eq = 1;
     avl->nb_trajet = 0;
     avl->nb_trajet_depart = 0;
-    avl->pTrajet = NULL;
+    avl->pTrajet = malloc(sizeof(Trajet));
     avl->fg = NULL;
     avl->fd = NULL;
 
