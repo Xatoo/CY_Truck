@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_TOP_SIZE 10
+#define TAILLE_MAX 10
 
 typedef struct _trajet {
   struct _trajet *fg;
