@@ -1,11 +1,21 @@
 #!/bin/bash
 
+chemin_opt_d1="demo/demo-d1.csv"
+chemin_opt_d2="demo/demo-d2.csv"
+chemin_opt_l="demo/demo-l.csv"
+chemin_opt_t="demo/demo-t.csv"
+chemin_opt_s="demo/demo-t.csv"
+
 # Fonction pour l'option -d1
 option_d1() {
+
     echo "Traitement pour l'option -d1"
 
     # Traitement des données, création du fichier demo/demo-d1.csv
-    cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > demo/demo-d1.csv
+    time cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > $chemin_opt_d1
+    
+    echo ""
+    echo "Le traitement s'est bien passée."
 }
 
 # Fonction pour l'option -d2
@@ -13,7 +23,10 @@ option_d2() {
     echo "Traitement pour l'option -d2"
 
     # Traitement des données, création du fichier demo/demo-d2.csv
-    cat $chemin_du_fichier | cut -d';' -f5,6 | awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > demo/demo-d2.csv
+    time cat $chemin_du_fichier | cut -d';' -f5,6 | awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > $chemin_opt_d2
+    
+    echo ""
+    echo "Le traitement s'est bien passée."
 }
 
 # Fonction pour l'option -l
@@ -21,64 +34,106 @@ option_l() {
     echo "Traitement pour l'option -l"
 
     # Traitement des données, création du fichier demo/demo-l.csv
-    cat $chemin_du_fichier | cut -d';' -f1,5 | awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -k1 -n > demo/demo-l.csv
+    time cat $chemin_du_fichier | cut -d';' -f1,5 | awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -k1 -n > $chemin_opt_l
+    
+    echo ""
+    echo "Le traitement s'est bien passée."
 }
 
 # Fonction pour l'option -t
 option_t() {
-    echo "Traitement pour l'option -t"
 
     # Compilation du programme option_t.c
-    gcc progc/option_t.c -o progc/option_t
+    gcc -o progc/option_t progc/option_t.c
     if [ $? -ne 0 ]; then
         echo "Erreur lors de la compilation"
         exit 1
+    else 
+    	echo "La compilation s'est bien passée."
     fi
-
+    
+    echo "Traitement pour l'option -t"
     # Traitement des données, création du fichier demo/demo-t.csv
-    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,6 | ./progc/option_t > demo/demo-t.csv
+    time cat $chemin_du_fichier | tail +2 | cut -d';' -f1,2,3,4 | ./progc/option_t > $chemin_opt_t
+    
+    code_sortie=$?
+
+if [ $code_sortie -eq 0 ]; then
+    echo ""
+    echo "Le traitement s'est bien passée."
+else
+    echo "Il y a eu une erreur avec un code de sortie $code_sortie."
+fi
+
 }
 
 # Fonction pour l'option -s
 option_s() {
-    echo "Traitement pour l'option -s"
 
     # Compilation du programme option_s.c
     gcc -o progc/option_s progc/option_s.c
     if [ $? -ne 0 ]; then
         echo "Erreur lors de la compilation"
         exit 1
+    else 
+    	echo "La compilation s'est bien passée."
     fi
 
+    echo "Traitement pour l'option -s"
     # Traitement des données, création du fichier demo/demo-s.csv
-    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5 | ./progc/option_s > demo/demo-s.csv
+    time cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5 | ./progc/option_s > $chemin_opt_s
+    
+    code_sortie=$?
+
+if [ $code_sortie -eq 0 ]; then
+    echo ""
+    echo "Le traitement s'est bien passée."
+else
+    echo "Il y a eu une erreur avec un code de sortie $code_sortie."
+fi
 }
 
 # Fonction pour l'option -h
 option_h() {
-    echo "-h aide (rtfm)"
 
-    echo "Usage: $0 <chemin_du_fichier> <-d1|-d2|-l|-t|-s|-h> [autres arguments...]"
-    echo "    -d1 : conducteurs avec le plus de trajets"
-    echo "    -d2 : conducteurs avec la plus grande distance"
-    echo "    -l  : les 10 trajets les plus longs"
-    echo "    -t  : les 10 villes les plus traversées"
-    echo "    -s  : statistiques sur les étapes"
+    echo "Usage: $0 [FICHIER]... [OPTION]..."
+    echo "Chaque option est traité indépendament"
+    echo "    -d1 	    : conducteurs avec le plus de trajets"
+    echo "    -d2 	    : conducteurs avec la plus grande distance"
+    echo "    -l  	    : les 10 trajets les plus longs"
+    echo "    -t  	    : les 10 villes les plus traversées"
+    echo "    -s  	    : statistiques sur les étapes"
+    echo ""
+    echo "Exemple: $0 user/fichier.csv -d1"
+    echo ""
+    echo "Utilitaire:"
+    echo "    -h, --help    : afficher cette aide et quitter"
+    echo "    -v, --version : affiche cette version et quitter"
+    echo ""
+    echo "Aide en ligne sur Github : <https://github.com/Xatoo/CY_Truck>"
 }
 
-# Vérification de l'option d'aide
+# Fonction pour l'option -v
+option_v() {
+
+    echo "$0 (Cy PreIng2 MI5-H) Version 1.2"
+    echo "Ceci est un logiciel libre. Vous êtes libre de le modifier et de le redistribuer."
+    echo "Ce logiciel n'est accompagné d'ABSOLUMENT AUCUNE GARANTIE, dans les limites permises par la loi."
+    echo ""
+    echo "Écrit par Hugo Delhelle, Lucas Matthes et Matheo Costa."
+}
+
+# Vérification de l'option d'aide ou de version
 for arg in "$@"; do
     if [ "$arg" = "-h" ] || [ "$arg" = "--help" ]; then
         option_h
         exit 0
     fi
+    if [ "$arg" = "-v" ] || [ "$arg" = "--version" ]; then
+        option_v
+        exit 0
+    fi
 done
-
-# Vérification du nombre d'arguments
-if [ "$#" -lt 2 ] || [ "$#" -gt 7 ]; then
-    echo "Nombre d'arguments incorrect"
-    exit 1
-fi
 
 chemin_du_fichier="$1"
 
@@ -138,6 +193,8 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
+echo ""
+
 # Traitement des options sélectionnées
 for opt in "${options_vu[@]}"; do
     case "$opt" in
@@ -148,3 +205,5 @@ for opt in "${options_vu[@]}"; do
     -s) option_s ;;
     esac
 done
+
+echo "L'exécution s'est bien passée."
