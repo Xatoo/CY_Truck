@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TAILLE_MAX 10
+#define MAX_TOP_SIZE 10
 
 typedef struct _trajet {
   struct _trajet *fg;
@@ -53,6 +53,23 @@ Arbre *creerArbre(char nom[30], int ville, int id_trajet, int id_depart) {
   avl->fg = NULL;
   avl->fd = NULL;
   return avl;
+}
+
+void libererMemoireTrajet(Trajet *trajet) {
+  if (trajet != NULL) {
+    libererMemoireTrajet(trajet->fg);
+    libererMemoireTrajet(trajet->fd);
+    free(trajet);
+  }
+}
+
+void libererMemoireArbre(Arbre *avl) {
+  if (avl != NULL) {
+    libererMemoireArbre(avl->fg);
+    libererMemoireArbre(avl->fd);
+    libererMemoireTrajet(avl->pTrajet);
+    free(avl);
+  }
 }
 
 Arbre *rotationGauche(Arbre *avl) {
@@ -134,15 +151,15 @@ Trajet *rotationDoubleDroite_trajet(Trajet *trajet) {
 Arbre *equilibreAvl(Arbre *avl) {
   if (avl->eq >= 2) {
     if (avl->fd->eq >= 0) {
-      return rotationGauche(avl);
+      avl = rotationGauche(avl);
     } else {
-      return rotationDoubleGauche(avl);
+      avl = rotationDoubleGauche(avl);
     }
   } else if (avl->eq <= -2) {
     if (avl->fg->eq <= 0) {
-      return rotationDroite(avl);
+      avl = rotationDroite(avl);
     } else {
-      return rotationDoubleDroite(avl);
+      avl = rotationDoubleDroite(avl);
     }
   }
   return avl;
@@ -165,60 +182,74 @@ Trajet *equilibreTrajet(Trajet *trajet) {
   return trajet;
 }
 
-Arbre *insertion(Arbre *avl, char nom[30], int ville, int id_trajet,
-                 int id_depart, int h) {
+Arbre *insertion(Arbre *avl, char nom[30], int ville, int id_trajet, int id_depart, int *h) {
 
   if (avl == NULL) {
-    h = 1;
+    *h = 1;
     return creerArbre(nom, ville, id_trajet, id_depart);
   } else if (ville < avl->ville) {
-
     avl->fg = insertion(avl->fg, nom, ville, id_trajet, id_depart, h);
-    h = -h;
+    if (*h != 0) {
+      avl->eq = avl->eq - 1;
+      avl = equilibreAvl(avl);
+      if (avl->eq == 0) {
+        *h = 0;
+      } else {
+        *h = 1;
+      }
+    }
   } else if (ville > avl->ville) {
-
     avl->fd = insertion(avl->fd, nom, ville, id_trajet, id_depart, h);
+    if (*h != 0) {
+      avl->eq = avl->eq + 1;
+      avl = equilibreAvl(avl);
+      if (avl->eq == 0) {
+        *h = 0;
+      } else {
+        *h = 1;
+      }
+    }
   } else {
-    h = 0;
+    *h = 0;
     return avl;
   }
-  if (h != 0) {
-    avl->eq = avl->eq + h;
-    avl = equilibreAvl(avl);
-    if (avl->eq == 0) {
-      h = 0;
-    } else {
-      h = 1;
-    }
-  }
+
   return avl;
 }
 
-Trajet *insertion_trajet(Trajet *trajet, int id_trajet, int h) {
+
+Trajet *insertion_trajet(Trajet *trajet, int id_trajet, int *h) {
 
   if (trajet == NULL) {
-    h = 1;
+    *h = 1;
     return creerTrajet(id_trajet);
   } else if (id_trajet < trajet->id_trajet) {
-
     trajet->fg = insertion_trajet(trajet->fg, id_trajet, h);
-    h = -h;
+    if (*h != 0) {
+      trajet->eq = trajet->eq - 1;
+      trajet = equilibreTrajet(trajet);
+      if (trajet->eq == 0) {
+        *h = 0;
+      } else {
+        *h = 1;
+      }
+    }
   } else if (id_trajet > trajet->id_trajet) {
-
     trajet->fd = insertion_trajet(trajet->fd, id_trajet, h);
+    if (*h != 0) {
+      trajet->eq = trajet->eq + 1;
+      trajet = equilibreTrajet(trajet);
+      if (trajet->eq == 0) {
+        *h = 0;
+      } else {
+        *h = 1;
+      }
+    }
   } else {
-    h = 0;
+    *h = 0;
     return trajet;
   }
-  if (h != 0) {
-    trajet->eq = trajet->eq + h;
-    trajet = equilibreTrajet(trajet);
-    if (trajet->eq == 0) {
-      h = 0;
-    } else {
-      h = 1;
-    }
-  }
+
   return trajet;
 }
 
@@ -248,15 +279,13 @@ Trajet *recherche_trajet(Trajet *trajet, int id) {
 
 void maj_arbre(Arbre *avl, int id_trajet, int id_etape) {
   if (avl != NULL) {
-
-    int h = 0;
     if (id_etape == 1) {
       avl->nb_trajet_depart += 1;
-    } else {
-      avl->nb_trajet_depart += 0;
     }
+
     if (recherche_trajet(avl->pTrajet, id_trajet) == NULL) {
-      avl->pTrajet = insertion_trajet(avl->pTrajet, id_trajet, h);
+      int h = 0;
+      avl->pTrajet = insertion_trajet(avl->pTrajet, id_trajet, &h);
       avl->nb_trajet += 1;
     }
   }
@@ -270,6 +299,14 @@ unsigned int hash(char *str) {
     hash = ((hash << 5) + hash) + c;
   }
   return hash;
+}
+
+void parcours_infixe(Arbre *p) {
+  if (p != NULL) {
+    parcours_infixe(p->fg);
+    printf("%d\n", p->ville);
+    parcours_infixe(p->fd);
+  }
 }
 
 void trouverTop10(Arbre *arbre, Arbre *top[], int *index) {
@@ -300,7 +337,7 @@ void trouverTop10(Arbre *arbre, Arbre *top[], int *index) {
 
 int comparerChaines(const char *chaine1, const char *chaine2) {
   while (*chaine1 && *chaine2) {
-    
+
     if (*chaine1 == ' ') {
       chaine1++;
       continue;
@@ -309,7 +346,7 @@ int comparerChaines(const char *chaine1, const char *chaine2) {
       chaine2++;
       continue;
     }
-    
+
     if (*chaine1 < *chaine2) {
       return -1;
     } else if (*chaine1 > *chaine2) {
@@ -335,11 +372,12 @@ void trierListe(Arbre *top[], int taille) {
 
   for (i = 0; i < taille - 1; i++) {
     for (j = 0; j < taille - 1 - i; j++) {
-    if (top[j] != NULL && top[j + 1] != NULL && comparerChaines(top[j]->nom, top[j + 1]->nom) > 0) {
-                
-      temp = top[j];
-      top[j] = top[j + 1];
-      top[j + 1] = temp;
+      if (top[j] != NULL && top[j + 1] != NULL &&
+          comparerChaines(top[j]->nom, top[j + 1]->nom) > 0) {
+
+        temp = top[j];
+        top[j] = top[j + 1];
+        top[j + 1] = temp;
       }
     }
   }
@@ -358,7 +396,8 @@ void afficherTop10(Arbre *avl) {
 
   for (int i = 0; i < MAX_TOP_SIZE; i++) {
     if (top[i] != NULL) {
-      printf("%d;%s;%d\n", top[i]->nb_trajet, top[i]->nom, top[i]->nb_trajet_depart);
+      printf("%d;%s;%d\n", top[i]->nb_trajet, top[i]->nom,
+             top[i]->nb_trajet_depart);
     }
   }
 }
@@ -371,18 +410,18 @@ int main() {
 
   while (1) {
     int result =
-    scanf("%d;%d;%99[^;];%99[^\n]\n", &trajet, &step, villeA, villeB);
+        scanf("%d;%d;%99[^;];%99[^\n]\n", &trajet, &step, villeA, villeB);
 
     if (result == EOF) {
       break;
     } else if (result == 4) {
-    
+
       int id_villeA = hash(villeA);
       int id_villeB = hash(villeB);
 
       Arbre *temp1 = avl;
       if (recherche(avl, id_villeA) == NULL) {
-        avl = insertion(avl, villeA, id_villeA, trajet, step, h);
+        avl = insertion(avl, villeA, id_villeA, trajet, step, &h);
       } else {
         temp1 = recherche(avl, id_villeA);
         maj_arbre(temp1, trajet, step);
@@ -390,20 +429,21 @@ int main() {
 
       Arbre *temp2 = avl;
       if (recherche(avl, id_villeB) == NULL) {
-        avl = insertion(avl, villeB, id_villeB, trajet, 0, h);
+        avl = insertion(avl, villeB, id_villeB, trajet, 0, &h);
       } else {
         temp2 = recherche(avl, id_villeB);
         maj_arbre(temp2, trajet, 0);
       }
 
     } else {
-      
+
       fprintf(stderr, "Format incorrect.\n");
       return 1;
     }
   }
   
   afficherTop10(avl);
-  
+  libererMemoireArbre(avl);
+
   return 0;
 }
