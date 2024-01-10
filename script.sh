@@ -4,7 +4,7 @@ chemin_opt_d1="demo/demo-d1.csv"
 chemin_opt_d2="demo/demo-d2.csv"
 chemin_opt_l="demo/demo-l.csv"
 chemin_opt_t="demo/demo-t.csv"
-chemin_opt_s="demo/demo-t.csv"
+chemin_opt_s="demo/demo-s.csv"
 
 # Fonction pour l'option -d1
 option_d1() {
