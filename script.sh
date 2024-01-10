@@ -24,6 +24,7 @@ option_d2() {
 
     # Traitement des données, création du fichier demo/demo-d2.csv
     time cat $chemin_du_fichier | cut -d';' -f5,6 | awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > $chemin_opt_d2
+
     
     echo ""
     echo "Le traitement s'est bien passée."
@@ -63,6 +64,7 @@ if [ $code_sortie -eq 0 ]; then
     echo "Le traitement s'est bien passée."
 else
     echo "Il y a eu une erreur avec un code de sortie $code_sortie."
+    exit 1
 fi
 
 }
@@ -90,13 +92,14 @@ if [ $code_sortie -eq 0 ]; then
     echo "Le traitement s'est bien passée."
 else
     echo "Il y a eu une erreur avec un code de sortie $code_sortie."
+    exit 1
 fi
 }
 
 # Fonction pour l'option -h
 option_h() {
 
-    echo "Usage: $0 [FICHIER]... [OPTION]..."
+    echo "Usage: $0 FICHIER OPTION..."
     echo "Chaque option est traité indépendament"
     echo "    -d1 	    : conducteurs avec le plus de trajets"
     echo "    -d2 	    : conducteurs avec la plus grande distance"
@@ -123,7 +126,7 @@ option_v() {
     echo "Écrit par Hugo Delhelle, Lucas Matthes et Matheo Costa."
 }
 
-# Vérification de l'option d'aide ou de version
+# Vérification de l'option d'aide ou de l'option version
 for arg in "$@"; do
     if [ "$arg" = "-h" ] || [ "$arg" = "--help" ]; then
         option_h
@@ -135,6 +138,12 @@ for arg in "$@"; do
     fi
 done
 
+# Vérification du nombre d'arguments
+if [ "$#" -lt 2 ]; then
+    echo "Nombre d'arguments incorrect"
+    exit 1
+fi
+
 chemin_du_fichier="$1"
 
 # Vérification de l'existence et de la lisibilité du fichier
@@ -142,6 +151,32 @@ if [ ! -r "$chemin_du_fichier" ]; then
     echo "Le fichier $chemin_du_fichier n'existe pas ou n'est pas accessible."
     exit 1
 fi
+
+# Initialisation du tableau d'options
+options_vu=()
+shift
+
+# Vérification des options
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+    -d1 | -d2 | -l | -t | -s)
+
+        # Vérification des doublons d'options
+        for opt in "${options_vu[@]}"; do
+            if [ "$opt" = "$1" ]; then
+                echo "L'option $1 a été utilisée plusieurs fois."
+                exit 1
+            fi
+        done
+        options_vu+=("$1")
+        ;;
+
+    *)
+        echo "Argument non reconnu : $1"
+        exit 1
+    esac
+    shift
+done
 
 # Création du répertoire temporaire
 if [ ! -d "temp" ]; then
@@ -166,32 +201,6 @@ if [ ! -d "images" ]; then
 else
     echo "Le répertoire 'images' existe déjà."
 fi
-
-# Initialisation du tableau d'options
-options_vu=()
-shift
-
-# Traitement des options en ligne de commande
-while [ "$#" -gt 0 ]; do
-    case "$1" in
-    -d1 | -d2 | -l | -t | -s)
-
-        # Vérification des doublons d'options
-        for opt in "${options_vu[@]}"; do
-            if [ "$opt" = "$1" ]; then
-                echo "L'option $1 a été utilisée plusieurs fois."
-                exit 1
-            fi
-        done
-        options_vu+=("$1")
-        ;;
-
-    *)
-        echo "Argument non reconnu : $1"
-        exit 1
-    esac
-    shift
-done
 
 echo ""
 
