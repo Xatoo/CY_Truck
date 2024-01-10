@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #define MAX_TOP_SIZE 10
 
@@ -52,23 +53,6 @@ Arbre *creerArbre(char nom[30], int ville, int id_trajet, int id_depart) {
   avl->fg = NULL;
   avl->fd = NULL;
   return avl;
-}
-
-void libererMemoireTrajet(Trajet *trajet) {
-  if (trajet != NULL) {
-    libererMemoireTrajet(trajet->fg);
-    libererMemoireTrajet(trajet->fd);
-    free(trajet);
-  }
-}
-
-void libererMemoireArbre(Arbre *avl) {
-  if (avl != NULL) {
-    libererMemoireArbre(avl->fg);
-    libererMemoireArbre(avl->fd);
-    libererMemoireTrajet(avl->pTrajet);
-    free(avl);
-  }
 }
 
 Arbre *rotationGauche(Arbre *avl) {
@@ -196,7 +180,7 @@ Arbre *insertion(Arbre *avl, char nom[30], int ville, int id_trajet, int id_depa
     } else {
         *h = 0;
     }
-
+    
     return avl;
 }
 
@@ -216,7 +200,7 @@ Trajet *insertion_trajet(Trajet *trajet, int id_trajet, int *h) {
     } else {
         *h = 0;
     }
-
+    
     return trajet;
 }
 
@@ -266,14 +250,6 @@ unsigned int hash(char *str) {
     hash = ((hash << 5) + hash) + c;
   }
   return hash;
-}
-
-void parcours_infixe(Arbre *p) {
-  if (p != NULL) {
-    parcours_infixe(p->fg);
-    printf("%d\n", p->ville);
-    parcours_infixe(p->fd);
-  }
 }
 
 void trouverTop10(Arbre *arbre, Arbre *top[], int *index) {
@@ -339,8 +315,7 @@ void trierListe(Arbre *top[], int taille) {
 
   for (i = 0; i < taille - 1; i++) {
     for (j = 0; j < taille - 1 - i; j++) {
-      if (top[j] != NULL && top[j + 1] != NULL &&
-          comparerChaines(top[j]->nom, top[j + 1]->nom) > 0) {
+      if (top[j] != NULL && top[j + 1] != NULL && comparerChaines(top[j]->nom, top[j + 1]->nom) > 0) {
 
         temp = top[j];
         top[j] = top[j + 1];
@@ -363,9 +338,25 @@ void afficherTop10(Arbre *avl) {
 
   for (int i = 0; i < MAX_TOP_SIZE; i++) {
     if (top[i] != NULL) {
-      printf("%d;%s;%d\n", top[i]->nb_trajet, top[i]->nom,
-             top[i]->nb_trajet_depart);
+      printf("%d;%s;%d\n", top[i]->nb_trajet, top[i]->nom, top[i]->nb_trajet_depart);
     }
+  }
+}
+
+void libererMemoireTrajet(Trajet *trajet) {
+  if (trajet != NULL) {
+    libererMemoireTrajet(trajet->fg);
+    libererMemoireTrajet(trajet->fd);
+    free(trajet);
+  }
+}
+
+void libererMemoireArbre(Arbre *avl) {
+  if (avl != NULL) {
+    libererMemoireArbre(avl->fg);
+    libererMemoireArbre(avl->fd);
+    libererMemoireTrajet(avl->pTrajet);
+    free(avl);
   }
 }
 
@@ -376,8 +367,7 @@ int main() {
   int h = 0;
 
   while (1) {
-    int result =
-        scanf("%d;%d;%99[^;];%99[^\n]\n", &trajet, &step, villeA, villeB);
+    int result = scanf("%d;%d;%99[^;];%99[^\n]\n", &trajet, &step, villeA, villeB);
 
     if (result == EOF) {
       break;
