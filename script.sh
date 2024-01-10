@@ -45,27 +45,44 @@ option_l() {
 option_t() {
 
     # Compilation du programme option_t.c
-    gcc -o progc/option_t progc/option_t.c
-    if [ $? -ne 0 ]; then
-        echo "Erreur lors de la compilation"
-        exit 1
-    else 
-    	echo "La compilation s'est bien passée."
-    fi
-    
-    echo "Traitement pour l'option -t"
-    # Traitement des données, création du fichier demo/demo-t.csv
-    time cat $chemin_du_fichier | tail +2 | cut -d';' -f1,2,3,4 | ./progc/option_t > $chemin_opt_t
-    
-    code_sortie=$?
+        gcc -o progc/option_t progc/option_t.c
+        if [ $? -ne 0 ]; then
+            echo "Erreur lors de la compilation"
+            exit 1
+        else
+            echo "La compilation s'est bien passée."
+            fi
 
-if [ $code_sortie -eq 0 ]; then
-    echo ""
-    echo "Le traitement s'est bien passée."
-else
-    echo "Il y a eu une erreur avec un code de sortie $code_sortie."
-    exit 1
-fi
+            echo "Traitement pour l'option -t"
+            # Traitement des données, création du fichier demo / demo - t.csv
+              deb_time=$(date +%s)
+            cat $chemin_du_fichier | tail +2 | cut -d';' -f1,2,3,4 | ./progc/option_t > $chemin_opt_t
+
+            code_sortie=$?
+            fin_time=$(date +%s)
+            temps=$((fin_time - deb_time))
+
+
+            echo "set term pngcairo enhanced" >images/temp_t.gnuplot
+            echo "set output 'images/graph_t.png'" >> images/temp_t.gnuplot
+            echo "set title 'Option -t'" >> images/temp_t.gnuplot
+            echo "set style data histograms " >>  images/temp_t.gnuplot
+            echo "set style histogram clustered" >>  images/temp_t.gnuplot
+            echo "set style fill solid" >>  images/temp_t.gnuplot
+            echo "set boxwidth 0.8 relative" >> images/temp_t.gnuplot
+            echo "set xtics rotate by -45"  >>  images/temp_t.gnuplot
+            echo "set ylabel 'Nombre de trajets'" >> images/temp_t.gnuplot
+            echo "plot '<awk -F";" {print $1, $2, $3} $chemin_opt_t' using 2:xtic(1) title 'totale', ' 'using 3 title 'depart'"  >> images/temp_t.gnuplot
+
+            gnuplot images/temp_t.gnuplot
+
+            if [ $code_sortie -eq 0 ]; then
+                echo ""
+                echo "Le traitement s'est bien passée."
+                echo "Temps de traitement : $temps secondes."
+            else
+                echo "Il y a eu une erreur avec un code de sortie $code_sortie."
+                fi
 
 }
 
