@@ -15,7 +15,7 @@ typedef struct _arbre {
   struct _arbre *fg;
   struct _arbre *fd;
   Trajet *pTrajet;
-  char nom[31];
+  char nom[30];
   int eq;
   int ville;
   int nb_trajet;
@@ -28,6 +28,7 @@ int min(int a, int b) { return (a < b) ? a : b; }
 int max2(int a, int b, int c) { return max(max(a, b), c); }
 
 int min2(int a, int b, int c) { return min(min(a, b), c); }
+
 Trajet *creerTrajet(int id_trajet) {
   Trajet *trajet = malloc(sizeof(Trajet));
   trajet->id_trajet = id_trajet;
@@ -46,8 +47,6 @@ Arbre *creerArbre(char nom[30], int ville, int id_trajet, int id_depart) {
   avl->nb_trajet = 1;
   if (id_depart == 1) {
     avl->nb_trajet_depart = 1;
-  } else {
-    avl->nb_trajet_depart = 0;
   }
   avl->pTrajet = creerTrajet(id_trajet);
   avl->fg = NULL;
@@ -183,74 +182,42 @@ Trajet *equilibreTrajet(Trajet *trajet) {
 }
 
 Arbre *insertion(Arbre *avl, char nom[30], int ville, int id_trajet, int id_depart, int *h) {
+    if (avl == NULL) {
+        *h = 1;
+        return creerArbre(nom, ville, id_trajet, id_depart);
+    } else if (ville < avl->ville) {
+        avl->fg = insertion(avl->fg, nom, ville, id_trajet, id_depart, h);
+        avl->eq--;
+        avl = equilibreAvl(avl);
+    } else if (ville > avl->ville) {
+        avl->fd = insertion(avl->fd, nom, ville, id_trajet, id_depart, h);
+        avl->eq++;
+        avl = equilibreAvl(avl);
+    } else {
+        *h = 0;
+    }
 
-  if (avl == NULL) {
-    *h = 1;
-    return creerArbre(nom, ville, id_trajet, id_depart);
-  } else if (ville < avl->ville) {
-    avl->fg = insertion(avl->fg, nom, ville, id_trajet, id_depart, h);
-    if (*h != 0) {
-      avl->eq = avl->eq - 1;
-      avl = equilibreAvl(avl);
-      if (avl->eq == 0) {
-        *h = 0;
-      } else {
-        *h = 1;
-      }
-    }
-  } else if (ville > avl->ville) {
-    avl->fd = insertion(avl->fd, nom, ville, id_trajet, id_depart, h);
-    if (*h != 0) {
-      avl->eq = avl->eq + 1;
-      avl = equilibreAvl(avl);
-      if (avl->eq == 0) {
-        *h = 0;
-      } else {
-        *h = 1;
-      }
-    }
-  } else {
-    *h = 0;
     return avl;
-  }
-
-  return avl;
 }
 
 
 Trajet *insertion_trajet(Trajet *trajet, int id_trajet, int *h) {
+    if (trajet == NULL) {
+        *h = 1;
+        return creerTrajet(id_trajet);
+    } else if (id_trajet < trajet->id_trajet) {
+        trajet->fg = insertion_trajet(trajet->fg, id_trajet, h);
+        trajet->eq--;
+        trajet = equilibreTrajet(trajet);
+    } else if (id_trajet > trajet->id_trajet) {
+        trajet->fd = insertion_trajet(trajet->fd, id_trajet, h);
+        trajet->eq++;
+        trajet = equilibreTrajet(trajet);
+    } else {
+        *h = 0;
+    }
 
-  if (trajet == NULL) {
-    *h = 1;
-    return creerTrajet(id_trajet);
-  } else if (id_trajet < trajet->id_trajet) {
-    trajet->fg = insertion_trajet(trajet->fg, id_trajet, h);
-    if (*h != 0) {
-      trajet->eq = trajet->eq - 1;
-      trajet = equilibreTrajet(trajet);
-      if (trajet->eq == 0) {
-        *h = 0;
-      } else {
-        *h = 1;
-      }
-    }
-  } else if (id_trajet > trajet->id_trajet) {
-    trajet->fd = insertion_trajet(trajet->fd, id_trajet, h);
-    if (*h != 0) {
-      trajet->eq = trajet->eq + 1;
-      trajet = equilibreTrajet(trajet);
-      if (trajet->eq == 0) {
-        *h = 0;
-      } else {
-        *h = 1;
-      }
-    }
-  } else {
-    *h = 0;
     return trajet;
-  }
-
-  return trajet;
 }
 
 Arbre *recherche(Arbre *avl, int id) {
