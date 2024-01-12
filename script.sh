@@ -238,7 +238,7 @@ option_h() {
     echo "    -t  	    : les 10 villes les plus traversées"
     echo "    -s  	    : statistiques sur les étapes"
     echo ""
-    echo "Exemple: $0 user/fichier.csv -d1"
+    echo "Exemple: $0 user/fichier.csv -a -d1"
     echo ""
     echo "Utilitaire:"    
     echo "    -a, --afficher : permet l'affichage automatique pour toute les options"
