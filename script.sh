@@ -20,8 +20,11 @@ option_d1() {
     echo "Traitement pour l'option -d1"
 
     # Traitement des données, création du fichier demo/demo-d1.csv
-    time cat $chemin_du_fichier | tail +2 | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > $chemin_opt_d1
+    deb_temps=$(date +%s)
+    cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > $chemin_opt_d1
+    fin_temps=$(date +%s)
     
+    diff_temps=$((fin_temps - deb_temps))
     gnuplot <<EOF
 reset
 set size square 1,1.1
@@ -49,6 +52,7 @@ EOF
     
     echo ""
     echo "Le traitement s'est bien passé. Le graphique a été enregistré dans 'images/image-d1.png'."
+    echo "La durée du traitement -d1 est de : $diff_temps secondes."
 }
 
 # Fonction pour l'option -d2
@@ -56,9 +60,12 @@ option_d2() {
     echo "Traitement pour l'option -d2"
 
     # Traitement des données, création du fichier demo/demo-d2.csv
-    time cat $chemin_du_fichier | cut -d';' -f5,6 | LC_NUMERIC=C awk -F';' '{count[$2]+=$1} END {for (name in count) printf "%.3f;%s\n", count[name], name}' | sort -t';' -r -k1 -n | head -n 10 > $chemin_opt_d2
-
-
+    deb_temps=$(date +%s)
+    cat $chemin_du_fichier | cut -d';' -f5,6 |LC_NUMERIC=C awk -F';' '{count[$2]+=$1} END {for (name in count) print"%.3f;%s\n", count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > $chemin_opt_d2
+ 	fin_temps=$(date +%s)
+    
+    diff_temps=$((fin_temps - deb_temps))
+	
     gnuplot <<EOF
 reset
 set size square 1,1.1
@@ -85,6 +92,7 @@ EOF
     
     echo ""
     echo "Le traitement s'est bien passée."
+    echo "La durée du traitement -d2 est de : $diff_temps secondes."
 }
 
 # Fonction pour l'option -l
@@ -92,8 +100,11 @@ option_l() {
     echo "Traitement pour l'option -l"
 
     # Traitement des données, création du fichier demo/demo-l.csv
-    time cat "$chemin_du_fichier" | tail +2 | cut -d';' -f1,5 | awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -t';' -k1 -n > "$chemin_opt_l"
-
+    deb_temps=$(date +%s)
+    cat "$chemin_du_fichier" | cut -d';' -f1,5 | awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -t';' -k1 -n > "$chemin_opt_l"
+	fin_temps=$(date +%s)
+    
+    diff_temps=$((fin_temps - deb_temps))
     gnuplot <<EOF
 reset
 set term png
@@ -115,6 +126,7 @@ EOF
     fi
     echo ""
     echo "Le traitement s'est bien passée."
+    echo "La durée du traitement -l est de : $diff_temps secondes."
 }
 
 # Fonction pour l'option -t
@@ -131,13 +143,17 @@ option_t() {
     
     echo "Traitement pour l'option -t"
     # Traitement des données, création du fichier demo/demo-t.csv
-    time cat $chemin_du_fichier | tail +2 | cut -d';' -f1,2,3,4 | ./progc/option_t > $chemin_opt_t
+    deb_temps=$(date +%s)
+    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,2,3,4 | ./progc/option_t > $chemin_opt_t
+    fin_temps=$(date +%s)
     
+    diff_temps=$((fin_temps - deb_temps))
     code_sortie=$?
 
     if [ $code_sortie -eq 0 ]; then
         echo ""
         echo "Le traitement s'est bien passée."
+        echo "La durée du traitement -t est de : $diff_temps secondes."
     else
         echo "Il y a eu une erreur avec un code de sortie $code_sortie."
         exit 1
@@ -180,13 +196,17 @@ option_s() {
 
     echo "Traitement pour l'option -s"
     # Traitement des données, création du fichier demo/demo-s.csv
-    time cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5 | ./progc/option_s > $chemin_opt_s
+    deb_temps=$(date +%s)
+    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5 | ./progc/option_s > $chemin_opt_s
+    fin_temps=$(date +%s)
     
+    diff_temps=$((fin_temps - deb_temps))    
     code_sortie=$?
 
     if [ $code_sortie -eq 0 ]; then
         echo ""
         echo "Le traitement s'est bien passée."
+        echo "La durée du traitement -s est de : $diff_temps secondes."
     else
         echo "Il y a eu une erreur avec un code de sortie $code_sortie."
         exit 1
@@ -229,7 +249,7 @@ option_h() {
     echo "Exemple: $0 user/fichier.csv -d1"
     echo ""
     echo "Utilitaire:"    
-    echo "    -a, --afficher : permet l'affichage automatique pour toute les options"
+    echo "    -a, --affichage : permet l'affichage automatique pour toute les options"
     echo "    -h, --help      : afficher cette aide et quitter"
     echo "    -v, --version   : afficher cette version et quitter"
     echo ""
@@ -290,7 +310,7 @@ while [ "$#" -gt 0 ]; do
         done
         options_vu+=("$1")
         ;;
-    -a | --afficher)
+    -a | -affichage)
         affiche="true"
         ;;
     *)
