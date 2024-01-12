@@ -249,7 +249,7 @@ option_h() {
     echo "Exemple: $0 user/fichier.csv -d1"
     echo ""
     echo "Utilitaire:"    
-    echo "    -a, --affichage : permet l'affichage automatique pour toute les options"
+    echo "    -a, --afficher  : permet l'affichage automatique pour toute les options"
     echo "    -h, --help      : afficher cette aide et quitter"
     echo "    -v, --version   : afficher cette version et quitter"
     echo ""
@@ -310,7 +310,7 @@ while [ "$#" -gt 0 ]; do
         done
         options_vu+=("$1")
         ;;
-    -a | -affichage)
+    -a | --afficher)
         affiche="true"
         ;;
     *)
