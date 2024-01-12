@@ -3,7 +3,6 @@
 #include <string.h>
 #include <assert.h>
 
-#define MAX_TOP_SIZE 10
 
 typedef struct _trajet {
   struct _trajet *fg;
@@ -259,13 +258,13 @@ void trouverTop10(Arbre *arbre, Arbre *top[], int *index) {
 
   trouverTop10(arbre->fd, top, index);
 
-  if (*index < MAX_TOP_SIZE) {
+  if (*index <10) {
     top[*index] = arbre;
     (*index)++;
   } else {
 
     int minIndex = 0;
-    for (int i = 1; i < MAX_TOP_SIZE; i++) {
+    for (int i = 1; i <10; i++) {
       if (top[i]->nb_trajet < top[minIndex]->nb_trajet) {
         minIndex = i;
       }
@@ -327,16 +326,16 @@ void trierListe(Arbre *top[], int taille) {
 
 void afficherTop10(Arbre *avl) {
   Arbre *top[MAX_TOP_SIZE];
-  for (int i = 0; i < MAX_TOP_SIZE; i++) {
+  for (int i = 0; i <10; i++) {
     top[i] = NULL;
   }
 
   int index = 0;
   trouverTop10(avl, top, &index);
 
-  trierListe(top, MAX_TOP_SIZE);
+  trierListe(top,10);
 
-  for (int i = 0; i < MAX_TOP_SIZE; i++) {
+  for (int i = 0; i <10; i++) {
     if (top[i] != NULL) {
       printf("%d;%s;%d\n", top[i]->nb_trajet, top[i]->nom, top[i]->nb_trajet_depart);
     }
