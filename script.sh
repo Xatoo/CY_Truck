@@ -214,6 +214,7 @@ set xtic rotate by 45 font '0,8' offset -2,-2.5
 set ylabel "Distance (km)" font '0,12'
 set xlabel "Identifiants Trajets" font '0,12' offset 0,-2
 set title 'Statistiques sur les étapes' font '0,15'
+set tics out nomirror
 set output '$chemin_img_s'
 plot "$chemin_opt_s" using 2:xtic(3) with filledcurves above fillcolor rgb '#E6ADAD' title 'Distance moyenne' lt rgb '#E6ADAD', \
      '' u 3:xtic(1) w filledcurves above fillcolor rgb '#FFFFFF' notitle lt rgb '#FFFFFF', \
