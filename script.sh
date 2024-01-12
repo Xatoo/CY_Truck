@@ -106,7 +106,7 @@ reset
 set term pngcairo size 800,600 enhanced font 'arial,10'
 set title 'Les 10 trajets les plus longs' font '0,15'
 set xlabel "Identifiants Trajets" font '0,12'
-set ylabel "Distances (km)" font '0,12'
+set ylabel "Distance (km)" font '0,12'
 set datafile separator ";"
 set style data histograms
 set style fill solid border -1
