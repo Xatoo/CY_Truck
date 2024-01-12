@@ -20,7 +20,7 @@ option_d1() {
     echo "Traitement pour l'option -d1"
 
     # Traitement des données, création du fichier demo/demo-d1.csv
-    time cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > $chemin_opt_d1
+    time cat $chemin_du_fichier | tail +2 | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > $chemin_opt_d1
     
     gnuplot <<EOF
 reset
@@ -56,7 +56,8 @@ option_d2() {
     echo "Traitement pour l'option -d2"
 
     # Traitement des données, création du fichier demo/demo-d2.csv
-    time cat $chemin_du_fichier | cut -d';' -f5,6 | awk -F';' '{count[$2]+=$1} END {for (name in count) print count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > $chemin_opt_d2
+    time cat $chemin_du_fichier | cut -d';' -f5,6 | LC_NUMERIC=C awk -F';' '{count[$2]+=$1} END {for (name in count) printf "%.3f;%s\n", count[name], name}' | sort -t';' -r -k1 -n | head -n 10 > $chemin_opt_d2
+
 
     gnuplot <<EOF
 reset
@@ -91,7 +92,7 @@ option_l() {
     echo "Traitement pour l'option -l"
 
     # Traitement des données, création du fichier demo/demo-l.csv
-    time cat "$chemin_du_fichier" | cut -d';' -f1,5 | awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -t';' -k1 -n > "$chemin_opt_l"
+    time cat "$chemin_du_fichier" | tail +2 | cut -d';' -f1,5 | awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -t';' -k1 -n > "$chemin_opt_l"
 
     gnuplot <<EOF
 reset
@@ -228,7 +229,7 @@ option_h() {
     echo "Exemple: $0 user/fichier.csv -d1"
     echo ""
     echo "Utilitaire:"    
-    echo "    -a, --affichage : permet l'affichage automatique pour toute les options"
+    echo "    -a, --afficher : permet l'affichage automatique pour toute les options"
     echo "    -h, --help      : afficher cette aide et quitter"
     echo "    -v, --version   : afficher cette version et quitter"
     echo ""
@@ -289,7 +290,7 @@ while [ "$#" -gt 0 ]; do
         done
         options_vu+=("$1")
         ;;
-    -a | -affichage)
+    -a | --afficher)
         affiche="true"
         ;;
     *)
