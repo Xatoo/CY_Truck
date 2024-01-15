@@ -68,9 +68,6 @@ Arbre * creerAvl(unsigned int id_t,float d){
 	return avl;
 }
 
-
-
-
 void maj(float d,Arbre * avl){
 	if (avl != NULL){
 		
@@ -88,8 +85,6 @@ void maj(float d,Arbre * avl){
 	}
 	
 }
-
-
 Arbre * rotationGauche(Arbre * avl){
 	Arbre * pivot = avl->fd;
 	avl->fd = pivot->fg;
@@ -105,7 +100,6 @@ Arbre * rotationGauche(Arbre * avl){
 
 
 }
-
 Arbre * recherche(Arbre * avl,int id){
 	if (avl == NULL){
 		return NULL;
@@ -122,8 +116,6 @@ Arbre * recherche(Arbre * avl,int id){
 
 }
 
-
-
 Arbre * rotationDroite(Arbre * avl){
 	Arbre * pivot = avl->fg;
 	avl->fg = pivot->fd;
@@ -137,7 +129,6 @@ Arbre * rotationDroite(Arbre * avl){
 
 	return avl;
 
-
 }
 Arbre * rotationDoubleGauche(Arbre * avl){
 	avl->fd = rotationDroite(avl->fd);
@@ -150,11 +141,8 @@ Arbre * rotationDoubleGauche(Arbre * avl){
 Arbre * rotationDoubleDroite(Arbre * avl){
 	avl->fd = rotationGauche(avl->fg);
 	return rotationDroite(avl);
-	
-
 
 }
-
 
 Arbre * equilibreAvl(Arbre * avl){
 	if (avl->eq >=2){
@@ -164,7 +152,6 @@ Arbre * equilibreAvl(Arbre * avl){
 		else {
 			return rotationDoubleGauche(avl);
 		}
-	
 	}
 	else if (avl->eq <= -2){
 		if (avl->fg->eq <=0){
@@ -173,25 +160,14 @@ Arbre * equilibreAvl(Arbre * avl){
 		else {
 			return rotationDoubleDroite(avl);
 		}
-	
-	
 	}
 	return avl;
 }
 
 
-
-
 Arbre * insertion(Arbre * avl,int id_trajet,int h,float distance){
-	
-		
 	if (avl == NULL){
-	
-		
 		h=1;
-	
-		
-		
 		return creerAvl(id_trajet,distance);	
 	}	
 	else if (id_trajet < avl->id_trajet){
@@ -223,8 +199,6 @@ Arbre * insertion(Arbre * avl,int id_trajet,int h,float distance){
 	}
 	return avl;	
 }
-
-
 
 
 
@@ -267,13 +241,10 @@ void insertTopValeur(TopValeur* topvaleur, NoeudInfo value) {
 
 
 
-
-
 void traverseAVL(Arbre* avl, TopValeur* topvaleur) {
 	if (avl != NULL) {
 		traverseAVL(avl->fd, topvaleur);
 
-		
 		NoeudInfo NoeudInfo;
 		NoeudInfo.id_trajet = avl->id_trajet;
 		NoeudInfo.max = avl->max;
@@ -306,54 +277,40 @@ int compareDecroissant(const void* a, const void* b) {
 void plusGrandesValeurs(Arbre* avl) {
 	size_t capacite = 50;
 	TopValeur* topvaleur = initTopValeur(capacite);
-
-	
 	traverseAVL(avl, topvaleur);
-
-
 	qsort(topvaleur->v, topvaleur->comp, sizeof(NoeudInfo), compareDecroissant);
-	
-	
 	for (size_t i = 0; i < topvaleur->comp; i++) {
 		printf("%d;%f;%f;%f;%f\n",topvaleur->v[i].id_trajet,
 			topvaleur->v[i].max, topvaleur->v[i].min,
 			topvaleur->v[i].moy, topvaleur->v[i].diff);
 	}
-
-	
 	freeTopValeur(topvaleur);
 }
 
-
-
-
 int main(){
-
-	
 	Arbre * avl = NULL;
 	float d;
 	int id_t;
-	int h;
+	int h=0;
 	
 	while(scanf("%d;%f", &id_t,&d) == 2){
-		Arbre * p = avl;
-		if (recherche(avl,id_t) == NULL){	
+		Arbre *p = avl;
+		if (recherche(avl,id_t) == NULL){
 			avl = insertion(avl,id_t,h,d);
-		}else {
-		
-			p = recherche(avl,id_t);
-			maj(d,p);
 			
+		}
+		else{
+			p=recherche(avl,id_t);
+			maj(d,p);
 		
+		 }
 		
-		}			
+	
 	}
-		
+	
+	
 	plusGrandesValeurs(avl);
-	
 	free(avl);
-	
-
 
 	return 0;
 }
