@@ -35,9 +35,9 @@ set style fill solid border -1
 set boxwidth 1.5 relative
 set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9 
 set y2label "Distance (km)" font '0,12' offset 3,0
-set ylabel "Conducteurs avec le plus de trajets" font '0,15' offset 3,0
+set ylabel "Conducteurs avec le plus de trajets" font '0,15' offset 4,0
 set xtic rotate by 90 font '0,10' offset 0.5,-9.5
-set ytic rotate by 90 font '0,11' offset 74,2
+set ytic rotate by 90 font '0,11' offset 69,1
 set style data histograms
 set output '$chemin_img_d1'
 plot "$chemin_opt_d1" using 1:xticlabels(2) notitle lc rgb "purple"
@@ -72,11 +72,11 @@ set grid y
 set datafile separator ";"
 set style fill solid border -1
 set boxwidth 1.5 relative
-set xlabel "Distance (km)" rotate by 180 font '0,12' offset 0,-9 
-set y2label "Conducteurs" font '0,12' offset 3,0
-set ylabel "Conducteurs et la plus grande distance" font '0,15' offset 3,0
+set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9 
+set y2label "Distance (km)" font '0,12' offset 3,0
+set ylabel "Conducteurs et la plus grande distance" font '0,15' offset 4,0
 set xtic rotate by 90 font '0,10' offset 0.5,-9.5
-set ytic rotate by 90 font '0,11' offset 74,2
+set ytic rotate by 90 font '0,11' offset 69,2
 set style data histograms
 set output '$chemin_img_d2'
 plot "$chemin_opt_d2" using 1:xticlabels(2) notitle lc rgb "orange"
