@@ -15,7 +15,7 @@ typedef struct _arbre {
   struct _arbre *fg;
   struct _arbre *fd;
   Trajet *pTrajet;
-  char nom[30];
+  char nom[50];
   int eq;
   int ville;
   int nb_trajet;
@@ -39,7 +39,7 @@ Trajet *creerTrajet(int id_trajet) {
   return trajet;
 }
 
-Arbre *creerArbre(char nom[30], int ville, int id_trajet, int id_depart) {
+Arbre *creerArbre(char nom[50], int ville, int id_trajet, int id_depart) {
   Arbre *avl = malloc(sizeof(Arbre));
   avl->ville = ville;
   strncpy(avl->nom, nom, sizeof(avl->nom) - 1);
@@ -164,7 +164,7 @@ Trajet *equilibreTrajet(Trajet *trajet) {
   return trajet;
 }
 
-Arbre *insertion(Arbre *avl, char nom[30], int ville, int id_trajet, int id_depart, int *h) {
+Arbre *insertion(Arbre *avl, char nom[50], int ville, int id_trajet, int id_depart, int *h) {
     if (avl == NULL) {
         *h = 1;
         return creerArbre(nom, ville, id_trajet, id_depart);
@@ -310,7 +310,7 @@ int comparerChaines(const char *chaine1, const char *chaine2) {
 
 void trierListe(Arbre *top[], int taille) {
   int i, j;
-  Arbre *temp;
+  Arbre *temp = NULL;
 
   for (i = 0; i < taille - 1; i++) {
     for (j = 0; j < taille - 1 - i; j++) {
@@ -325,7 +325,7 @@ void trierListe(Arbre *top[], int taille) {
 }
 
 void afficherTop10(Arbre *avl) {
-  Arbre *top[MAX_TOP_SIZE];
+  Arbre *top[10];
   for (int i = 0; i <10; i++) {
     top[i] = NULL;
   }
@@ -337,7 +337,7 @@ void afficherTop10(Arbre *avl) {
 
   for (int i = 0; i <10; i++) {
     if (top[i] != NULL) {
-      printf("%d;%s;%d\n", top[i]->nb_trajet, top[i]->nom, top[i]->nb_trajet_depart);
+      printf("%s;%d;%d\n", top[i]->nom, top[i]->nb_trajet, top[i]->nb_trajet_depart);
     }
   }
 }
@@ -360,7 +360,7 @@ void libererMemoireArbre(Arbre *avl) {
 }
 
 int main() {
-  char villeA[30], villeB[30];
+  char villeA[50], villeB[50];
   int trajet, step;
   Arbre *avl = NULL;
   int h = 0;
