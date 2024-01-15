@@ -15,7 +15,7 @@ typedef struct _arbre {
   struct _arbre *fg;
   struct _arbre *fd;
   Trajet *pTrajet;
-  char nom[50];
+  char nom[35];
   int eq;
   int ville;
   int nb_trajet;
@@ -39,7 +39,7 @@ Trajet *creerTrajet(int id_trajet) {
   return trajet;
 }
 
-Arbre *creerArbre(char nom[50], int ville, int id_trajet, int id_depart) {
+Arbre *creerArbre(char nom[30], int ville, int id_trajet, int id_depart) {
   Arbre *avl = malloc(sizeof(Arbre));
   avl->ville = ville;
   strncpy(avl->nom, nom, sizeof(avl->nom) - 1);
@@ -164,7 +164,7 @@ Trajet *equilibreTrajet(Trajet *trajet) {
   return trajet;
 }
 
-Arbre *insertion(Arbre *avl, char nom[50], int ville, int id_trajet, int id_depart, int *h) {
+Arbre *insertion(Arbre *avl, char nom[30], int ville, int id_trajet, int id_depart, int *h) {
     if (avl == NULL) {
         *h = 1;
         return creerArbre(nom, ville, id_trajet, id_depart);
@@ -310,7 +310,7 @@ int comparerChaines(const char *chaine1, const char *chaine2) {
 
 void trierListe(Arbre *top[], int taille) {
   int i, j;
-  Arbre *temp = NULL;
+  Arbre *temp;
 
   for (i = 0; i < taille - 1; i++) {
     for (j = 0; j < taille - 1 - i; j++) {
@@ -337,7 +337,7 @@ void afficherTop10(Arbre *avl) {
 
   for (int i = 0; i <10; i++) {
     if (top[i] != NULL) {
-      printf("%s;%d;%d\n", top[i]->nom, top[i]->nb_trajet, top[i]->nb_trajet_depart);
+      printf("%s;%d;%d\n",  top[i]->nom,top[i]->nb_trajet,top[i]->nb_trajet_depart);
     }
   }
 }
@@ -360,34 +360,30 @@ void libererMemoireArbre(Arbre *avl) {
 }
 
 int main() {
-  char villeA[50], villeB[50];
+  char villeA[35], villeB[35];
   int trajet, step;
   Arbre *avl = NULL;
   int h = 0;
 
-  while (1) {
-    int result = scanf("%d;%d;%99[^;];%99[^\n]\n", &trajet, &step, villeA, villeB);
-
-    if (result == EOF) {
-      break;
-    } else if (result == 4) {
+  while (scanf("%d;%d;%99[^;];%99[^\n]\n", &trajet, &step, villeA, villeB)==4) {
+   
 
       int id_villeA = hash(villeA);
       int id_villeB = hash(villeB);
 
-      Arbre *temp1 = avl;
-      if (recherche(avl, id_villeA) == NULL) {
+      Arbre *temp1 = recherche(avl, id_villeA);
+      if (temp1 == NULL) {
         avl = insertion(avl, villeA, id_villeA, trajet, step, &h);
       } else {
-        temp1 = recherche(avl, id_villeA);
+        
         maj_arbre(temp1, trajet, step);
       }
 
-      Arbre *temp2 = avl;
-      if (recherche(avl, id_villeB) == NULL) {
+      Arbre *temp2 = recherche(avl, id_villeB);
+      if (temp2 == NULL) {
         avl = insertion(avl, villeB, id_villeB, trajet, 0, &h);
       } else {
-        temp2 = recherche(avl, id_villeB);
+      	
         maj_arbre(temp2, trajet, 0);
       }
 
