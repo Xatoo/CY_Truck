@@ -39,7 +39,7 @@ Trajet *creerTrajet(int id_trajet) {
   return trajet;
 }
 
-Arbre *creerArbre(char nom[35], int ville, int id_trajet, int id_depart) {
+Arbre *creerArbre(char nom[30], int ville, int id_trajet, int id_depart) {
   Arbre *avl = malloc(sizeof(Arbre));
   avl->ville = ville;
   strncpy(avl->nom, nom, sizeof(avl->nom) - 1);
@@ -53,7 +53,7 @@ Arbre *creerArbre(char nom[35], int ville, int id_trajet, int id_depart) {
   avl->fd = NULL;
   return avl;
 }
- 
+
 Arbre *rotationGauche(Arbre *avl) {
   Arbre *pivot = avl->fd;
   avl->fd = pivot->fg;
@@ -164,7 +164,7 @@ Trajet *equilibreTrajet(Trajet *trajet) {
   return trajet;
 }
 
-Arbre *insertion(Arbre *avl, char nom[35], int ville, int id_trajet, int id_depart, int *h) {
+Arbre *insertion(Arbre *avl, char nom[30], int ville, int id_trajet, int id_depart, int *h) {
     if (avl == NULL) {
         *h = 1;
         return creerArbre(nom, ville, id_trajet, id_depart);
@@ -386,7 +386,9 @@ int main() {
       	
         maj_arbre(temp2, trajet, 0);
       }
-  }
+
+    }
+  
   
   afficherTop10(avl);
   libererMemoireArbre(avl);
