@@ -24,6 +24,9 @@ int min2(int a,int b,int c){
 
 Arbre * creerAvl(unsigned int id_t,float d){
 	Arbre * avl = malloc(sizeof(Arbre));
+	if (avl == NULL){
+		exit(1);
+	}
 	avl->id_trajet = id_t;
 	avl->distance = d;
 	avl->fg = NULL;
