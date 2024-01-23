@@ -84,7 +84,7 @@ Arbre * rotationDoubleGauche(Arbre * avl){
 }
 
 Arbre * rotationDoubleDroite(Arbre * avl){
-	avl->fd = rotationGauche(avl->fg);
+	avl->fg = rotationGauche(avl->fg);
 	return rotationDroite(avl);
 	
 
