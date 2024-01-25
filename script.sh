@@ -44,7 +44,7 @@ set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9
 set y2label "Distance (km)" font '0,12' offset 3,0
 set ylabel "Conducteurs avec le plus de trajets" font '0,15' offset 4,0
 set xtic rotate by 90 font '0,10' offset 0.5,-9.5
-set ytic rotate by 90 font '0,11' offset 69,1
+set ytic rotate by 90 font '0,11' offset 74,1
 
 plot "$chemin_opt_d1" using 1:xticlabels(2) notitle lc rgb "purple"
 EOF
@@ -91,7 +91,7 @@ set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9
 set y2label "Distance (km)" font '0,12' offset 3,0
 set ylabel "Conducteurs et la plus grande distance" font '0,15' offset 4,0
 set xtic rotate by 90 font '0,10' offset 0.5,-9.5
-set ytic rotate by 90 font '0,11' offset 69,2
+set ytic rotate by 90 font '0,11' offset 74,2
 
 plot "$chemin_opt_d2" using 1:xticlabels(2) notitle lc rgb "orange"
 EOF
