@@ -18,13 +18,17 @@ affiche="false"
 # Fonction pour l'option -d1
 option_d1() {
     echo "Traitement pour l'option -d1"
+    
+    # Mesure du temps de fin du traitement
+    deb_temps=$(date +%s)
 
     # Traitement des données, création du fichier demo/demo-d1.csv
-    deb_temps=$(date +%s)
     cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > $chemin_opt_d1
     fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))
+
+    # Utilisation de Gnuplot pour générer le graphique
     gnuplot <<EOF
 reset
 set size square 1,1
@@ -43,7 +47,10 @@ set output '$chemin_img_d1'
 plot "$chemin_opt_d1" using 1:xticlabels(2) notitle lc rgb "purple"
 EOF
 
+    # Rotation de l'image
     convert -rotate 90 $chemin_img_d1 $chemin_img_d1
+    
+    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_d1" &
     fi
@@ -56,14 +63,17 @@ EOF
 # Fonction pour l'option -d2
 option_d2() {
     echo "Traitement pour l'option -d2"
-
-    # Traitement des données, création du fichier demo/demo-d2.csv
+    
+    # Mesure du temps de fin du traitement
     deb_temps=$(date +%s)
+
+    # Traitement des données, création du fichier demo/demo-d1.csv
     cat $chemin_du_fichier | cut -d';' -f5,6 |LC_NUMERIC=C awk -F';' '{count[$2]+=$1} END {for (name in count) print"%.3f;%s\n", count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > $chemin_opt_d2
- 	fin_temps=$(date +%s)
+    fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))
-	
+
+    # Utilisation de Gnuplot pour générer le graphique
     gnuplot <<EOF
 reset
 set size square 1,1
@@ -81,7 +91,11 @@ set style data histograms
 set output '$chemin_img_d2'
 plot "$chemin_opt_d2" using 1:xticlabels(2) notitle lc rgb "orange"
 EOF
+    
+    # Rotation de l'image
     convert -rotate 90 $chemin_img_d2 $chemin_img_d2
+    
+    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_d2" &
     fi
@@ -94,13 +108,17 @@ EOF
 # Fonction pour l'option -l
 option_l() {
     echo "Traitement pour l'option -l"
-
-    # Traitement des données, création du fichier demo/demo-l.csv
+    
+    # Mesure du temps de fin du traitement
     deb_temps=$(date +%s)
+
+    # Traitement des données, création du fichier demo/demo-d1.csv
     cat "$chemin_du_fichier" | cut -d';' -f1,5 | awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -t';' -k1 -n > "$chemin_opt_l"
-	fin_temps=$(date +%s)
+    fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))
+
+    # Utilisation de Gnuplot pour générer le graphique
     gnuplot <<EOF
 reset
 set term pngcairo size 800,600 enhanced font 'arial,10'
@@ -116,9 +134,11 @@ set output '$chemin_img_l'
 plot "$chemin_opt_l" using 2:xtic(1) lc rgb "red" notitle
 EOF
 
+    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_l" &
     fi
+    
     echo ""
     echo "Le traitement s'est bien passée."
     echo "La durée du traitement -l est de : $diff_temps secondes."
@@ -137,23 +157,18 @@ option_t() {
     fi
     
     echo "Traitement pour l'option -t"
-    # Traitement des données, création du fichier demo/demo-t.csv
+    
+    # Mesure du temps de fin du traitement
     deb_temps=$(date +%s)
+
+    # Traitement des données, création du fichier demo/demo-d1.csv
     cat $chemin_du_fichier | tail +2 | cut -d';' -f1,2,3,4 | ./progc/option_t > $chemin_opt_t
     fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))
     code_sortie=$?
-
-    if [ $code_sortie -eq 0 ]; then
-        echo ""
-        echo "Le traitement s'est bien passée."
-        echo "La durée du traitement -t est de : $diff_temps secondes."
-    else
-        echo "Il y a eu une erreur avec un code de sortie $code_sortie."
-        exit 1
-    fi
     
+    # Utilisation de Gnuplot pour générer le graphique
     gnuplot <<EOF
 reset
 set term pngcairo size 1280,720 enhanced font 'arial,10'
@@ -171,9 +186,19 @@ set output '$chemin_img_t'
 plot "$chemin_opt_t" using 2:xtic(1) title 'Total de trajet' lc rgb "blue", \
      "" using 3:x2tic(1) title 'Ville de départ' lc rgb "green"
 EOF
-    
+
+    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_t" &
+    fi
+    
+    if [ $code_sortie -eq 0 ]; then
+        echo ""
+        echo "Le traitement s'est bien passée."
+        echo "La durée du traitement -t est de : $diff_temps secondes."
+    else
+        echo "Il y a eu une erreur avec un code de sortie $code_sortie."
+        exit 1
     fi
 }
 
@@ -190,23 +215,18 @@ option_s() {
     fi
 
     echo "Traitement pour l'option -s"
-    # Traitement des données, création du fichier demo/demo-s.csv
+    
+    # Mesure du temps de fin du traitement
     deb_temps=$(date +%s)
+
+    # Traitement des données, création du fichier demo/demo-d1.csv
     cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5 | ./progc/option_s > $chemin_opt_s
     fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))    
     code_sortie=$?
-
-    if [ $code_sortie -eq 0 ]; then
-        echo ""
-        echo "Le traitement s'est bien passée."
-        echo "La durée du traitement -s est de : $diff_temps secondes."
-    else
-        echo "Il y a eu une erreur avec un code de sortie $code_sortie."
-        exit 1
-    fi
     
+    # Utilisation de Gnuplot pour générer le graphique
     gnuplot <<EOF
 set term pngcairo size 1280,720 enhanced font 'arial,10'
 set datafile separator ";"
@@ -223,8 +243,19 @@ plot "$chemin_opt_s" using 2:xtic(3) with filledcurves above fillcolor rgb '#E6A
      '' u 3:xtic(1) w l lc rgb "white" lw 2 notitle
 
 EOF
+
+    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_s" &
+    fi
+
+    if [ $code_sortie -eq 0 ]; then
+        echo ""
+        echo "Le traitement s'est bien passée."
+        echo "La durée du traitement -s est de : $diff_temps secondes."
+    else
+        echo "Il y a eu une erreur avec un code de sortie $code_sortie."
+        exit 1
     fi
 }
 
