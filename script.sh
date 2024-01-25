@@ -37,13 +37,15 @@ set grid y
 set datafile separator ";"
 set style fill solid border -1
 set boxwidth 1.5 relative
+set style data histograms
+set output '$chemin_img_d1'
+
 set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9 
 set y2label "Distance (km)" font '0,12' offset 3,0
 set ylabel "Conducteurs avec le plus de trajets" font '0,15' offset 4,0
 set xtic rotate by 90 font '0,10' offset 0.5,-9.5
 set ytic rotate by 90 font '0,11' offset 69,1
-set style data histograms
-set output '$chemin_img_d1'
+
 plot "$chemin_opt_d1" using 1:xticlabels(2) notitle lc rgb "purple"
 EOF
 
@@ -82,13 +84,15 @@ set grid y
 set datafile separator ";"
 set style fill solid border -1
 set boxwidth 1.5 relative
+set style data histograms
+set output '$chemin_img_d2'
+
 set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9 
 set y2label "Distance (km)" font '0,12' offset 3,0
 set ylabel "Conducteurs et la plus grande distance" font '0,15' offset 4,0
 set xtic rotate by 90 font '0,10' offset 0.5,-9.5
 set ytic rotate by 90 font '0,11' offset 69,2
-set style data histograms
-set output '$chemin_img_d2'
+
 plot "$chemin_opt_d2" using 1:xticlabels(2) notitle lc rgb "orange"
 EOF
     
@@ -122,15 +126,17 @@ option_l() {
     gnuplot <<EOF
 reset
 set term pngcairo size 800,600 enhanced font 'arial,10'
+set datafile separator ";"
+set style fill solid border -1
+set boxwidth 1.5 relative
+set style data histograms
+set output '$chemin_img_l'
+
 set title 'Les 10 trajets les plus longs' font '0,15'
 set xlabel "Identifiants Trajets" font '0,12'
 set ylabel "Distance (km)" font '0,12'
-set datafile separator ";"
-set style data histograms
-set style fill solid border -1
-set boxwidth 1.5 relative
 set xtic rotate by 0 font '0,11'
-set output '$chemin_img_l'
+
 plot "$chemin_opt_l" using 2:xtic(1) lc rgb "red" notitle
 EOF
 
@@ -172,17 +178,19 @@ option_t() {
     gnuplot <<EOF
 reset
 set term pngcairo size 1280,720 enhanced font 'arial,10'
-set title 'Les 10 villes les plus traversées' font '0,15'
-set datafile separator ";"
 set grid
-set xlabel "Villes" font '0,12'
-set ylabel "Nombres de trajets" font '0,12'
+set datafile separator ";"
+set style fill solid border -1
+set boxwidth 1.5 
 set style data histograms
 set style histogram cluster gap 1
-set style fill solid border -1
-set xtic font '0,12'
-set boxwidth 1.5
 set output '$chemin_img_t'
+
+set title 'Les 10 villes les plus traversées' font '0,15'
+set xlabel "Villes" font '0,12'
+set ylabel "Nombres de trajets" font '0,12'
+set xtic font '0,12'
+
 plot "$chemin_opt_t" using 2:xtic(1) title 'Total de trajet' lc rgb "blue", \
      "" using 3:x2tic(1) title 'Ville de départ' lc rgb "green"
 EOF
@@ -230,13 +238,15 @@ option_s() {
     gnuplot <<EOF
 set term pngcairo size 1280,720 enhanced font 'arial,10'
 set datafile separator ";"
+set output '$chemin_img_s'
+
+set title 'Statistiques sur les étapes' font '0,15'
 set xtic rotate by 45 font '0,8' offset -2,-2.5
 set ylabel "Distance (km)" font '0,12'
 set xlabel "Identifiants Trajets" font '0,12' offset 0,-2
-set title 'Statistiques sur les étapes' font '0,15'
 set tics out nomirror
-set output '$chemin_img_s'
-plot "$chemin_opt_s" using 2:xtic(3) with filledcurves above fillcolor rgb '#E6ADAD' title 'Distance moyenne' lt rgb '#E6ADAD', \
+
+plot "$chemin_opt_s" using 2:xtic(3) with filledcurves above fillcolor rgb '#E6ADAD' title 'Distance max/min' lt rgb '#E6ADAD', \
      '' u 3:xtic(1) w filledcurves above fillcolor rgb '#FFFFFF' notitle lt rgb '#FFFFFF', \
      '' u 4:xtic(1) w l lw 2 title 'Moyenne', \
      '' u 2:xtic(1) w l lc rgb "white" lw 2 notitle, \
