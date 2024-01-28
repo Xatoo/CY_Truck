@@ -18,41 +18,32 @@ affiche="false"
 # Fonction pour l'option -d1
 option_d1() {
     echo "Traitement pour l'option -d1"
-    
-    # Mesure du temps de fin du traitement
-    deb_temps=$(date +%s)
 
     # Traitement des données, création du fichier demo/demo-d1.csv
+    deb_temps=$(date +%s)
     cat $chemin_du_fichier | cut -d';' -f1,6 | awk -F';' '!seen[$0]++ {count[$2]+=1} END {for (name in count) print count[name]";"name}' | sort -t';' -k1 -n -r | head -n 10 > $chemin_opt_d1
     fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))
-
-    # Utilisation de Gnuplot pour générer le graphique
     gnuplot <<EOF
-reset
-set size square 1,1
-set term pngcairo size 600,800 enhanced font 'arial,10'
-set grid y
-set datafile separator ";"
-set style fill solid border -1
-set boxwidth 1.5 relative
-set style data histograms
-set output '$chemin_img_d1'
-
-set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9 
-set y2label "Distance (km)" font '0,12' offset 3,0
-set ylabel "Conducteurs avec le plus de trajets" font '0,15' offset 4,0
-set xtic rotate by 90 font '0,10' offset 0.5,-9.5
-set ytic rotate by 90 font '0,11' offset 74,1
-
-plot "$chemin_opt_d1" using 1:xticlabels(2) notitle lc rgb "purple"
+    reset
+    set size square 1,1
+    set term pngcairo size 600,800 enhanced font 'arial,10'
+    set grid y
+    set datafile separator ";"
+    set style fill solid border -1
+    set boxwidth 1.5 relative
+    set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9 
+    set y2label "Distance (km)" font '0,12' offset 3,0
+    set ylabel "Conducteurs avec le plus de trajets" font '0,15' offset 4,0
+    set xtic rotate by 90 font '0,10' offset 0.5,-9.5
+    set ytic rotate by 90 font '0,11' offset 74,1
+    set style data histograms
+    set output '$chemin_img_d1'
+    plot "$chemin_opt_d1" using 1:xticlabels(2) notitle lc rgb "purple"
 EOF
-
-    # Rotation de l'image
+	#rotation de l'image pour obtenir un histogramme horizontale
     convert -rotate 90 $chemin_img_d1 $chemin_img_d1
-    
-    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_d1" &
     fi
@@ -65,88 +56,73 @@ EOF
 # Fonction pour l'option -d2
 option_d2() {
     echo "Traitement pour l'option -d2"
-    
-    # Mesure du temps de fin du traitement
-    deb_temps=$(date +%s)
 
-    # Traitement des données, création du fichier demo/demo-d1.csv
+    # Traitement des données, création du fichier demo/demo-d2.csv
+    deb_temps=$(date +%s)
     cat $chemin_du_fichier | cut -d';' -f5,6 |LC_NUMERIC=C awk -F';' '{count[$2]+=$1} END {for (name in count) print"%.3f;%s\n", count[name]";"name}' | sort -t';' -r -k1 -n | head -n 10 > $chemin_opt_d2
-    fin_temps=$(date +%s)
+ 	fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))
-
-    # Utilisation de Gnuplot pour générer le graphique
+    # Generation d'un graphique grace a GnuPlot
     gnuplot <<EOF
-reset
-set size square 1,1
-set term pngcairo size 600,800 enhanced font 'arial,10'
-set grid y
-set datafile separator ";"
-set style fill solid border -1
-set boxwidth 1.5 relative
-set style data histograms
-set output '$chemin_img_d2'
-
-set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9 
-set y2label "Distance (km)" font '0,12' offset 3,0
-set ylabel "Conducteurs et la plus grande distance" font '0,15' offset 4,0
-set xtic rotate by 90 font '0,10' offset 0.5,-9.5
-set ytic rotate by 90 font '0,11' offset 74,2
-
-plot "$chemin_opt_d2" using 1:xticlabels(2) notitle lc rgb "orange"
+    reset
+    set size square 1,1
+    set term pngcairo size 600,800 enhanced font 'arial,10'
+    set grid y
+    set datafile separator ";"
+    set style fill solid border -1
+    set boxwidth 1.5 relative
+    set xlabel "Conducteurs" rotate by 180 font '0,12' offset 0,-9 
+    set y2label "Distance (km)" font '0,12' offset 3,0
+    set ylabel "Conducteurs et la plus grande distance" font '0,15' offset 4,0
+    set xtic rotate by 90 font '0,10' offset 0.5,-9.5
+    set ytic rotate by 90 font '0,11' offset 74,2
+    set style data histograms
+    set output '$chemin_img_d2'
+    plot "$chemin_opt_d2" using 1:xticlabels(2) notitle lc rgb "orange"
 EOF
-    
-    # Rotation de l'image
+	#rotation de l'image pour obtenir un histogramme horizontale
     convert -rotate 90 $chemin_img_d2 $chemin_img_d2
-    
-    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_d2" &
     fi
     
     echo ""
-    echo "Le traitement s'est bien passée."
+    echo "Le traitement s'est bien passé. Le graphique a été enregistré dans 'images/image-d2.png'."
     echo "La durée du traitement -d2 est de : $diff_temps secondes."
 }
 
 # Fonction pour l'option -l
 option_l() {
     echo "Traitement pour l'option -l"
-    
-    # Mesure du temps de fin du traitement
-    deb_temps=$(date +%s)
 
-    # Traitement des données, création du fichier demo/demo-d1.csv
+    # Traitement des données, création du fichier demo/demo-l.csv
+    deb_temps=$(date +%s)
     cat "$chemin_du_fichier" | cut -d';' -f1,5 | awk -F';' '{count[$1]+=$2} END {for (name in count) print name";"count[name]}' | sort -t';' -k2 -n | tail -10 | sort -t';' -k1 -n > "$chemin_opt_l"
-    fin_temps=$(date +%s)
+	fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))
-
-    # Utilisation de Gnuplot pour générer le graphique
+     # Generation d'un graphique grace a GnuPlot
     gnuplot <<EOF
-reset
-set term pngcairo size 800,600 enhanced font 'arial,10'
-set datafile separator ";"
-set style fill solid border -1
-set boxwidth 1.5 relative
-set style data histograms
-set output '$chemin_img_l'
-
-set title 'Les 10 trajets les plus longs' font '0,15'
-set xlabel "Identifiants Trajets" font '0,12'
-set ylabel "Distance (km)" font '0,12'
-set xtic rotate by 0 font '0,11'
-
-plot "$chemin_opt_l" using 2:xtic(1) lc rgb "red" notitle
+    reset
+    set term pngcairo size 800,600 enhanced font 'arial,10'
+    set title 'Les 10 trajets les plus longs' font '0,15'
+    set xlabel "Identifiants Trajets" font '0,12'
+    set ylabel "Distance (km)" font '0,12'
+    set datafile separator ";"
+    set style data histograms
+    set style fill solid border -1
+    set boxwidth 1.5 relative
+    set xtic rotate by 0 font '0,11'
+    set output '$chemin_img_l'
+    plot "$chemin_opt_l" using 2:xtic(1) lc rgb "red" notitle
 EOF
 
-    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_l" &
     fi
-    
     echo ""
-    echo "Le traitement s'est bien passée."
+    echo "Le traitement s'est bien passé. Le graphique a été enregistré dans 'images/image-l.png'."
     echo "La durée du traitement -l est de : $diff_temps secondes."
 }
 
@@ -154,119 +130,134 @@ EOF
 option_t() {
 
     # Compilation du programme option_t.c
-    gcc -o progc/option_t progc/option_t.c
-    if [ $? -ne 0 ]; then
+      cd progc
+    cd option_t
+    make all > /dev/null 2>&1
+    if [ ! -e "exe" ] ; then
         echo "Erreur lors de la compilation"
         exit 1
     else 
     	echo "La compilation s'est bien passée."
     fi
+    cd .. 
+    cd ..
+ 	
     
     echo "Traitement pour l'option -t"
-    
-    # Mesure du temps de fin du traitement
+    # Traitement des données, création du fichier demo/demo-t.csv
     deb_temps=$(date +%s)
-
-    # Traitement des données, création du fichier demo/demo-d1.csv
-    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,2,3,4 | ./progc/option_t > $chemin_opt_t
+    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,2,3,4 | ./progc/option_t/exe > $chemin_opt_t
     fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))
     code_sortie=$?
-    
-    # Utilisation de Gnuplot pour générer le graphique
-    gnuplot <<EOF
-reset
-set term pngcairo size 1280,720 enhanced font 'arial,10'
-set grid
-set datafile separator ";"
-set style fill solid border -1
-set boxwidth 1.5 
-set style data histograms
-set style histogram cluster gap 1
-set output '$chemin_img_t'
 
-set title 'Les 10 villes les plus traversées' font '0,15'
-set xlabel "Villes" font '0,12'
-set ylabel "Nombres de trajets" font '0,12'
-set xtic font '0,12'
-
-plot "$chemin_opt_t" using 2:xtic(1) title 'Total de trajet' lc rgb "blue", \
-     "" using 3:x2tic(1) title 'Ville de départ' lc rgb "green"
-EOF
-
-    # Affichage de l'option -a
-    if [ $affiche = "true" ]; then
-        display "$chemin_img_t" &
-    fi
-    
     if [ $code_sortie -eq 0 ]; then
         echo ""
-        echo "Le traitement s'est bien passée."
+        echo "Le traitement s'est bien passé. Le graphique a été enregistré dans 'images/image-t.png'."
         echo "La durée du traitement -t est de : $diff_temps secondes."
     else
         echo "Il y a eu une erreur avec un code de sortie $code_sortie."
         exit 1
     fi
+     # Generation d'un graphique grace a GnuPlot
+    gnuplot <<EOF
+    reset
+    set term pngcairo size 1280,720 enhanced font 'arial,10'
+    set title 'Les 10 villes les plus traversées' font '0,15'
+    set datafile separator ";"
+    set grid
+    set xlabel "Villes" font '0,12'
+    set ylabel "Nombres de trajets" font '0,12'
+    set style data histograms
+    set style histogram cluster gap 1
+    set style fill solid border -1
+    set xtic font '0,12'
+    set boxwidth 1.5
+    set output '$chemin_img_t'
+    plot "$chemin_opt_t" using 2:xtic(1) title 'Total de trajet' lc rgb "blue", \
+     "" using 3:x2tic(1) title 'Ville de départ' lc rgb "green"
+EOF
+    
+    if [ $affiche = "true" ]; then
+        display "$chemin_img_t" &
+    fi
+    cd progc
+    cd option_t
+    rm exe
+    rm option_t.o
+    rm arbre_t.o
+    cd ..
+    cd ..	
+		
+	
 }
 
 # Fonction pour l'option -s
 option_s() {
 
     # Compilation du programme option_s.c
-    gcc -o progc/option_s progc/option_s.c
-    if [ $? -ne 0 ]; then
+    cd progc
+    cd option_s
+    make all> /dev/null 2>&1
+    if [ ! -e "exe" ] ; then
         echo "Erreur lors de la compilation"
         exit 1
     else 
     	echo "La compilation s'est bien passée."
     fi
+    cd .. 
+    cd ..
+ 
 
     echo "Traitement pour l'option -s"
-    
-    # Mesure du temps de fin du traitement
+    # Traitement des données, création du fichier demo/demo-s.csv
     deb_temps=$(date +%s)
-
-    # Traitement des données, création du fichier demo/demo-d1.csv
-    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5 | ./progc/option_s > $chemin_opt_s
+    cat $chemin_du_fichier | tail +2 | cut -d';' -f1,5 | ./progc/option_s/exe > $chemin_opt_s
     fin_temps=$(date +%s)
     
     diff_temps=$((fin_temps - deb_temps))    
     code_sortie=$?
-    
-    # Utilisation de Gnuplot pour générer le graphique
+
+    if [ $code_sortie -eq 0 ]; then
+        echo ""
+        echo "Le traitement s'est bien passé. Le graphique a été enregistré dans 'images/image-s.png'."
+        echo "La durée du traitement -s est de : $diff_temps secondes."
+    else
+        echo "Il y a eu une erreur avec un code de sortie $code_sortie."
+        exit 1
+    fi
+     # Generation d'un graphique grace a GnuPlot
     gnuplot <<EOF
-set term pngcairo size 1280,720 enhanced font 'arial,10'
-set datafile separator ";"
-set output '$chemin_img_s'
-
-set title 'Statistiques sur les étapes' font '0,15'
-set xtic rotate by 45 font '0,8' offset -2,-2.5
-set ylabel "Distance (km)" font '0,12'
-set xlabel "Identifiants Trajets" font '0,12' offset 0,-2
-set tics out nomirror
-
-plot "$chemin_opt_s" using 2:xtic(3) with filledcurves above fillcolor rgb '#E6ADAD' title 'Distance max/min' lt rgb '#E6ADAD', \
+    set term pngcairo size 1280,720 enhanced font 'arial,10'
+    set datafile separator ";"
+    set xtic rotate by 45 font '0,8' offset -2,-2.5
+    set ylabel "Distance (km)" font '0,12'
+    set xlabel "Identifiants Trajets" font '0,12' offset 0,-2
+    set title 'Statistiques sur les étapes' font '0,15'
+    set tics out nomirror
+    set output '$chemin_img_s'
+    plot "$chemin_opt_s" using 2:xtic(3) with filledcurves above fillcolor rgb '#E6ADAD' title 'Distance Max/Min' lt rgb '#E6ADAD', \
      '' u 3:xtic(1) w filledcurves above fillcolor rgb '#FFFFFF' notitle lt rgb '#FFFFFF', \
      '' u 4:xtic(1) w l lw 2 title 'Moyenne', \
      '' u 2:xtic(1) w l lc rgb "white" lw 2 notitle, \
      '' u 3:xtic(1) w l lc rgb "white" lw 2 notitle
 
 EOF
-
-    # Affichage de l'option -a
     if [ $affiche = "true" ]; then
         display "$chemin_img_s" &
     fi
-
-    if [ $code_sortie -eq 0 ]; then
-        echo ""
-        echo "Le traitement s'est bien passée."
-        echo "La durée du traitement -s est de : $diff_temps secondes."
-    else
-        echo "Il y a eu une erreur avec un code de sortie $code_sortie."
-        exit 1
-    fi
+    
+    cd progc
+    
+    cd option_s
+    rm option_s.o
+    rm arbre_s.o
+    rm exe
+    cd ..
+    cd ..
+    
+    
 }
 
 # Fonction pour l'option -h
@@ -375,7 +366,7 @@ if [ ! -d "images" ]; then
     mkdir "images"
     echo "Le répertoire 'images' a été créé."
 else
-    echo "Le répertoire 'images' existe déjà."
+    echo " "
 fi
 
 echo ""
@@ -392,3 +383,5 @@ for opt in "${options_vu[@]}"; do
 done
 
 echo "L'exécution s'est bien passée."
+
+
