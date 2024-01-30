@@ -10,7 +10,9 @@ Pour l'éxecuter utiliser la commande :
 
 ./script.sh chemin_fichier -option 
 
-Les options sont indiqués si vous utiliser l'option -h (aide), qui détaille le resultat de chaque option (le nomre d'option importe peu tant qu'elles sont valide, si vous entrée -h et une autre option seulement le -h sera traité).
+Les options sont indiqués si vous utiliser l'option -h (aide), qui détaille le resultat de chaque option (si vous entrée -h et une autre option seulement le -h sera traité).
 
+Le nomre d'option importe peu tant qu'elles sont valide, veiller à ne pas entrer deux fois la même option (une vérification est effectuer dans le script shell qui arrete l'éxecution en cas de doublon)
 
+Une fois executer vous retrouver les graphiques dans un dossier dans un dossier indiqué lors de l'éxecution du script. 
 
