@@ -6,15 +6,19 @@
 
 
 
-int max(int a, int b) { return (a > b) ? a : b; }
-int min(int a, int b) { return (a < b) ? a : b; }
+int max(int a, int b) { return (a > b) ? a : b; }  //renvoie la plus grande valeur entre deux entier passer en paramètre
+int min(int a, int b) { return (a < b) ? a : b; }  //renvoie la plus petite valeur entre deux entier passer en paramètre
 
-int max2(int a, int b, int c) { return max(max(a, b), c); }
+int max2(int a, int b, int c) { return max(max(a, b), c); }  //renvoie la plus grande valeur entre trois entier passer en paramètre
 
-int min2(int a, int b, int c) { return min(min(a, b), c); }
+int min2(int a, int b, int c) { return min(min(a, b), c); }  //renvoie la plus petite valeur entre trois entier passer en paramètre
 
-Trajet *creerTrajet(int id_trajet) {
+Trajet *creerTrajet(int id_trajet) { 
+  //Initialisation d'un noeud de l'arbre Trajet 
   Trajet *trajet = malloc(sizeof(Trajet));
+  if (trajet == NULL){
+        exit(1);
+  }
   trajet->id_trajet = id_trajet;
   trajet->fg = NULL;
   trajet->fd = NULL;
@@ -24,7 +28,11 @@ Trajet *creerTrajet(int id_trajet) {
 }
 
 Arbre *creerArbre(char nom[35], int ville, int id_trajet, int id_depart) {
+  //Initialisation d'un noeud de l'arbre trier en fonction des villes
   Arbre *avl = malloc(sizeof(Arbre));
+   if (avl == NULL){
+        exit(1);
+  }
   avl->ville = ville;
   strncpy(avl->nom, nom, sizeof(avl->nom) - 1);
   avl->eq = 0;
