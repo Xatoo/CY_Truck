@@ -17,9 +17,7 @@ int min2(int a, int b, int c) { return min(min(a, b), c); }  //renvoie la plus p
 Trajet *creerTrajet(int id_trajet) { 
  //Allocation de mémoire pour le Trajet
   Trajet *trajet = malloc(sizeof(Trajet));
-  if (trajet == NULL){
-        exit(1);
-  }
+  
   //Initialisation des champs du Trajet
   trajet->id_trajet = id_trajet;
   trajet->fg = NULL;
