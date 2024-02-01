@@ -3,21 +3,23 @@
 #include<stdlib.h>
 #include<stddef.h>
 
+//Fonction qui renvoie la plus grande valeur entre deux entiers passer en paramètre
 int max(int a,int b){
 	return (a>b)? a:b;
 }
+//Fonction qui renvoie la plus petite valeur entre deux entiers passer en paramètre
 int min(int a,int b){
 	return (a<b)? a:b;
 }
-
+//Fonction qui renvoie la plus grande valeur entre trois entiers passer en paramètre
 int max2(int a,int b,int c){
 	return max(max(a,b),c);
 }
-
+//Fonction qui renvoie la plus petite valeur entre trois entiers passer en paramètre
 int min2(int a,int b,int c){
 	return min(min(a,b),c);
 }
-
+//Fonction de création d'un nouveau noeud AVL
 Arbre * creerAvl(unsigned int id_t,float d){
 	Arbre * avl = malloc(sizeof(Arbre));
 	avl->id_trajet = id_t;
@@ -35,6 +37,7 @@ Arbre * creerAvl(unsigned int id_t,float d){
 	return avl;
 }
 
+//Rotation simple à gauche pour l'équilibrage de l'AVL
 Arbre * rotationGauche(Arbre * avl){
 	Arbre * pivot = avl->fd;
 	avl->fd = pivot->fg;
@@ -50,6 +53,7 @@ Arbre * rotationGauche(Arbre * avl){
 
 
 }
+//Fonction de recherche d'un noeud AVL avec un certain id
 Arbre * recherche(Arbre * avl,int id){
 	if (avl == NULL){
 		return NULL;
@@ -65,6 +69,7 @@ Arbre * recherche(Arbre * avl,int id){
 	}
 
 }
+//Rotation simple à droite pour l'équilibrage de l'AVL
 Arbre * rotationDroite(Arbre * avl){
 	Arbre * pivot = avl->fg;
 	avl->fg = pivot->fd;
@@ -75,10 +80,11 @@ Arbre * rotationDroite(Arbre * avl){
 	
 	avl->eq = eq_avl - min(eq_piv,0) +1;
 	pivot->eq = max2(eq_avl+2,eq_avl+eq_piv+2,eq_piv+1);
-
+	avl = pivot;
 	return avl;
 
 }
+//Rotation double à gauche pour l'équilibrage de l'AVL
 Arbre * rotationDoubleGauche(Arbre * avl){
 	avl->fd = rotationDroite(avl->fd);
 	return rotationGauche(avl);
@@ -86,13 +92,13 @@ Arbre * rotationDoubleGauche(Arbre * avl){
 
 
 }
-
+//Rotation double à droite pour l'équilibrage de l'AVL
 Arbre * rotationDoubleDroite(Arbre * avl){
 	avl->fd = rotationGauche(avl->fg);
 	return rotationDroite(avl);
 
 }
-
+//fonction pour équilibrer l'AVL
 Arbre * equilibreAvl(Arbre * avl){
 	if (avl->eq >=2){
 		if (avl->fd->eq >=0){
@@ -112,7 +118,7 @@ Arbre * equilibreAvl(Arbre * avl){
 	}
 	return avl;
 }
-
+//Fonction pour inserer un noeud AVL
 Arbre * insertion(Arbre * avl,int id_trajet,int h,float distance){
 	if (avl == NULL){
 		h=1;
@@ -147,6 +153,8 @@ Arbre * insertion(Arbre * avl,int id_trajet,int h,float distance){
 	}
 	return avl;	
 }
+
+//Mise à jour des statistiques d'un noeud AVL
 void maj(float d,Arbre * avl){
 	if (avl != NULL){
 		
@@ -167,7 +175,7 @@ void maj(float d,Arbre * avl){
 
 
 
-
+//Initialise la structure TopValeur avec une capacité donnée
 TopValeur* initTopValeur(size_t capacite) {
 	TopValeur* topvaleur = malloc(sizeof(TopValeur));
 	topvaleur->v = malloc(capacite * sizeof(NoeudInfo));
@@ -175,13 +183,13 @@ TopValeur* initTopValeur(size_t capacite) {
 	topvaleur->capacite = capacite;
 	return topvaleur;
 }
-
+//libère la memoire alloué pour la structure TopValeur
 void freeTopValeur(TopValeur* topvaleur) {
 	free(topvaleur->v);
 	free(topvaleur);
 }
 
-
+//Insere une valeur dans le top des valeurs;
 void insertTopValeur(TopValeur* topvaleur, NoeudInfo value) {
 	if (topvaleur->comp < topvaleur->capacite || value.diff > topvaleur->v[topvaleur->comp - 1].diff) {
 		size_t i = topvaleur->comp;
@@ -205,7 +213,7 @@ void insertTopValeur(TopValeur* topvaleur, NoeudInfo value) {
 
 
 
-
+//Parcour l'AVL et insère les informations dans le top des valeurs
 void traverseAVL(Arbre* avl, TopValeur* topvaleur) {
 	if (avl != NULL) {
 		traverseAVL(avl->fd, topvaleur);
@@ -223,6 +231,7 @@ void traverseAVL(Arbre* avl, TopValeur* topvaleur) {
 	}
 }
 
+//Fonction de comparaison pour le tri decroissant du tableau top valeur
 int compareDecroissant(const void* a, const void* b) {
 	float diffA = ((NoeudInfo*)a)->diff;
 	float diffB = ((NoeudInfo*)b)->diff;
@@ -238,7 +247,7 @@ int compareDecroissant(const void* a, const void* b) {
 	}
 }
 
-
+//Affiche les plus grandes valeurs du top des valeurs
 void plusGrandesValeurs(Arbre* avl) {
 	size_t capacite = 50;
 	TopValeur* topvaleur = initTopValeur(capacite);
@@ -252,6 +261,7 @@ void plusGrandesValeurs(Arbre* avl) {
 	freeTopValeur(topvaleur);
 }
 
+//libère la mémoire alloué pour l'arbre AVL
 void libererArbre(Arbre * avl){
 	if(avl!=NULL){
 		libererArbre(avl->fg);
@@ -262,4 +272,3 @@ void libererArbre(Arbre * avl){
 	
 
 }
-
