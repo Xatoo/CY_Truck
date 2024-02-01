@@ -30,9 +30,7 @@ Trajet *creerTrajet(int id_trajet) {
 Arbre *creerArbre(char nom[35], int ville, int id_trajet, int id_depart) {
   // Allocation de mémoire pour l'arbre
   Arbre *avl = malloc(sizeof(Arbre));
-   if (avl == NULL){
-        exit(1);
-  }
+  
    // Initialisation des champs de l'arbre
   avl->ville = ville;
   strncpy(avl->nom, nom, sizeof(avl->nom) - 1);
