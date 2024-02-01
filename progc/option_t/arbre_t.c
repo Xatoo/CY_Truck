@@ -17,7 +17,9 @@ int min2(int a, int b, int c) { return min(min(a, b), c); }  //renvoie la plus p
 Trajet *creerTrajet(int id_trajet) { 
  //Allocation de mémoire pour le Trajet
   Trajet *trajet = malloc(sizeof(Trajet));
-  
+  if (trajet==NULL){
+  	exit(1);
+  }
   //Initialisation des champs du Trajet
   trajet->id_trajet = id_trajet;
   trajet->fg = NULL;
@@ -30,7 +32,9 @@ Trajet *creerTrajet(int id_trajet) {
 Arbre *creerArbre(char nom[35], int ville, int id_trajet, int id_depart) {
   // Allocation de mémoire pour l'arbre
   Arbre *avl = malloc(sizeof(Arbre));
-  
+  if (avl==NULL){
+  	exit(1);
+  }
    // Initialisation des champs de l'arbre
   avl->ville = ville;
   strncpy(avl->nom, nom, sizeof(avl->nom) - 1);
@@ -57,8 +61,8 @@ Arbre *rotationGauche(Arbre *avl) {
 
   avl->eq = eq_avl - max(eq_piv, 0) - 1;
   pivot->eq = min2(eq_avl - 2, eq_avl + eq_piv - 2, eq_piv - 1);
-  
-  return pivot;
+  avl=pivot;
+  return avl;
 }
 // Fonction pour effectuer une rotation droite dans l'arbre AVL
 Arbre *rotationDroite(Arbre *avl) {
@@ -72,8 +76,8 @@ Arbre *rotationDroite(Arbre *avl) {
 
   avl->eq = eq_avl - min(eq_piv, 0) + 1;
   pivot->eq = max2(eq_avl + 2, eq_avl + eq_piv + 2, eq_piv + 1);
-
-  return pivot;
+  avl=pivot;
+  return avl;
 }
 // Fonction pour effectuer une double rotation gauche-droite dans l'arbre AVL
 Arbre *rotationDoubleGauche(Arbre *avl) {
@@ -97,8 +101,8 @@ Trajet *rotationGauche_trajet(Trajet *trajet) {
 
   trajet->eq = eq_trajet - max(eq_piv, 0) - 1;
   pivot->eq = min2(eq_trajet - 2, eq_trajet + eq_piv - 2, eq_piv - 1);
-
-  return pivot;
+  trajet=pivot;
+  return trajet;
 }
 // Fonction pour effectuer une rotation droite dans le sous-arbre Trajet
 Trajet *rotationDroite_trajet(Trajet *trajet) {
@@ -112,8 +116,8 @@ Trajet *rotationDroite_trajet(Trajet *trajet) {
 
   trajet->eq = eq_trajet - min(eq_piv, 0) + 1;
   pivot->eq = max2(eq_trajet + 2, eq_trajet + eq_piv + 2, eq_piv + 1);
-
-  return pivot;
+  trajet=pivot;
+  return trajet;
 }
 // Fonction pour effectuer une double rotation gauche-droite dans le sous-arbre Trajet
 Trajet *rotationDoubleGauche_trajet(Trajet *trajet) {
@@ -258,7 +262,7 @@ void maj_arbre(Arbre *avl, int id_trajet, int id_etape) {
 // Fonction pour trouver les 10 villes avec le plus grand nombre de trajets
 void trouverTop10(Arbre *arbre, Arbre *top[], int *index) {
   if (arbre == NULL) {
-    / L'arbre est vide, on retourne
+    // L'arbre est vide, on retourne
     return;
   }
   // Parcours en ordre décroissant (droite - racine - gauche)
