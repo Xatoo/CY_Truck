@@ -6,12 +6,12 @@
 
 
 
-int max(int a, int b) { return (a > b) ? a : b; }  //renvoie la plus grande valeur entre deux entier passer en paramètre
-int min(int a, int b) { return (a < b) ? a : b; }  //renvoie la plus petite valeur entre deux entier passer en paramètre
+int max(int a, int b) { return (a > b) ? a : b; }  //renvoie la plus grande valeur entre deux entiers passer en paramètre
+int min(int a, int b) { return (a < b) ? a : b; }  //renvoie la plus petite valeur entre deux entiers passer en paramètre
 
-int max2(int a, int b, int c) { return max(max(a, b), c); }  //renvoie la plus grande valeur entre trois entier passer en paramètre
+int max2(int a, int b, int c) { return max(max(a, b), c); }  //renvoie la plus grande valeur entre trois entiers passer en paramètre
 
-int min2(int a, int b, int c) { return min(min(a, b), c); }  //renvoie la plus petite valeur entre trois entier passer en paramètre
+int min2(int a, int b, int c) { return min(min(a, b), c); }  //renvoie la plus petite valeur entre trois entiers passer en paramètre
 
 //Fonction pour créer un nouveau noeud Trajet dans l'arbre
 Trajet *creerTrajet(int id_trajet) { 
