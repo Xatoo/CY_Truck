@@ -1,6 +1,10 @@
 # CY_Truck
 
-Afin d'utiliser l'application, veuillez vous rendre depuis le terminal dans le dossier contenant le fichier script.sh. Il se peut qu'il ne possède pas les droits d'exécution, donc pour pouvoir utiliser l'application par la suite, vous pouvez exécuter la commande :
+Afin d'utiliser l'application, veuillez vous rendre depuis le terminal dans le dossier contenant le fichier script.sh, vous pouvez utiliser la commande suivante :
+
+bash script.sh chemin_fichier -option1 -option2 ...
+
+Sinon vous pouvez les droits d'exécution, avec cette commande:
 
 chmod +x script.sh
 
@@ -8,7 +12,7 @@ Maintenant, l'application est prête à être exécutée. La compilation des fic
 
 Pour l'exécuter, utilisez la commande :
 
-./script.sh chemin_fichier -option
+./script.sh chemin_fichier -option1 -option2 ...
 
 Les options sont indiquées si vous utilisez l'option -h (aide), qui détaille le résultat de chaque option. Si vous entrez l'option d'aide (-h) ou de version (-v), seul celle ci serons éxécuté.
 
